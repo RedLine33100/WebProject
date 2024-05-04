@@ -1,5 +1,5 @@
 {# welcome.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'layout/base.html.twig' %}
 
 {% block title %}Welcome!{% endblock %}
 
@@ -7,11 +7,5 @@
 
     <h1>Welcome {{ user|default("Anonymous") }} !</h1>
     <p>Bienvenue sur notre site de ventes!</p>
-
-    {% if user == "Anonymous" %}
-        <a href="/?username=Lucas">Connexion rapide</a>
-    {% else %}
-        <a href="/">Deconnexion</a>
-    {% endif %}
 
 {% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block body %}
+
+    <h1>Produits:</h1>
+
+    <table border="1">
+
+        <tr>
+
+            <th>Product Name</th>
+
+            <th>Description</th>
+
+            <th>Pays</th>
+
+            <th>Price</th>
+
+        </tr>
+
+        {% for produit in products %}
+
+            <tr>
+
+                <td>{{ produit.name }}</td>
+                <td>{{ produit.description }}</td>
+                <td>
+                    <ul>
+                        {% for pays in produit.pays %}
+                            {{ pays.name }}
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ produit.price }}</td>
+
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+<!-- header.html.twig -->
+
+<link rel="stylesheet" href="{{ asset('stylesheet/headernav.css') }}">
+
+<nav>
+
+    <ul>
+
+        <li><a href="{{ path('app_welcome') }}">Accueil</a></li>
+
+        <li><a href="{{ path('app_produits_p') }}">Produits</a></li>
+
+        <li><a href="#">Compte</a>
+
+            <ul>
+
+                {% if not app.user %}
+
+                <li><a href="{{ path('app_account_login') }}">Login</a></li>
+                <li><a href="{{ path('app_account_register') }}">Register</a></li>
+
+                {% else %}
+
+                <li><a href="{{ path('app_account_logout') }}">Logout</a></li>
+
+                {% endif %}
+
+            </ul>
+
+        </li>
+
+        <li><a href="#">Panier</a></li>
+
+    </ul>
+
+</nav>
