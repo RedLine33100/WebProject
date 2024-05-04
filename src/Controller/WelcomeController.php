@@ -22,8 +22,8 @@ class WelcomeController extends AbstractController
         // Les données au fichier Twig
         $donnees = [];
 
-        if(isset($_GET['username'])) {
-            $donnees['user'] = $_GET["username"];
+        if(isset($_COOKIE['username'])) {
+            $donnees['user'] = $_COOKIE["username"];
         } else {
             $donnees['user'] = "Anonymous";
         }
