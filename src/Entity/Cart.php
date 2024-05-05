@@ -21,12 +21,12 @@ class Cart
     #[ORM\OneToMany(targetEntity: ProduitCart::class, mappedBy: 'cart', orphanRemoval: true)]
     private Collection $items;
 
-    #[ORM\ManyToOne(inversedBy: 'carts')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Account $account = null;
-
-    #[ORM\Column]
+    #[ORM\Column(name: 'is_paid')]
     private ?bool $isPaid = false;
+
+    #[ORM\ManyToOne(inversedBy: 'carts')]
+    #[ORM\JoinColumn(name: 'id_account', nullable: false)]
+    private ?Account $account = null;
 
     public function __construct()
     {
@@ -68,18 +68,6 @@ class Cart
         return $this;
     }
 
-    public function getAccount(): ?Account
-    {
-        return $this->account;
-    }
-
-    public function setAccount(Account $account): static
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
     public function getIsPaid(): ?bool
     {
         return $this->isPaid;
@@ -88,6 +76,18 @@ class Cart
     public function setPaid(bool $paid): static
     {
         $this->isPaid = $paid;
+
+        return $this;
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(?Account $account): static
+    {
+        $this->account = $account;
 
         return $this;
     }

@@ -1,0 +1,58 @@
+{% extends 'layout/base.html.twig' %}
+{% block body %}
+    <h1>Cart</h1>
+
+    {% if message is defined %}
+        <h4>{{ message }}</h4>
+    {% endif %}
+
+    {% if cartProducts is defined %}
+
+        {% set i = 0 %}
+
+        <table border="1">
+
+        <tr>
+
+            <th>Product Name</th>
+
+            <th>Pays</th>
+
+            <th>Price</th>
+
+            <th>Amount</th>
+
+            <th>CP ID</th>
+
+            <th>Supprimer</th>
+
+        </tr>
+
+        {% for cartProduct in cartProducts %}
+
+            <tr>
+
+                <th>{{ cartProduct.produit.name }}</th>
+                <th>{{ cartProduct.pays.name }}</th>
+                <th>{{ cartProduct.produit.price }}</th>
+                <th>{{ cartProduct.amount }}</th>
+                {{ form_start(suppForms[i]) }}
+                <th>{{ form_row(suppForms[i].pID) }}</th>
+                <th>{{ form_row(suppForms[i].send) }}</th>
+                {{ form_end(suppForms[i]) }}
+
+            </tr>
+
+            {% set i = i+1 %}
+
+        {% endfor %}
+
+        </table>
+
+        {% if paidButton is defined %}
+        {{ form(paidButton) }}
+            {% endif %}
+
+    {% endif %}
+
+{% endblock %}

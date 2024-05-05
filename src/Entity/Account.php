@@ -151,6 +151,18 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    public function removeCart(Cart $cart): static
+    {
+        if ($this->carts->removeElement($cart)) {
+            // set the owning side to null (unless already changed)
+            if ($cart->getAccount() === $this) {
+                $cart->setAccount(null);
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Cart>
      */
@@ -164,18 +176,6 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->carts->contains($cart)) {
             $this->carts->add($cart);
             $cart->setAccount($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCart(Cart $cart): static
-    {
-        if ($this->carts->removeElement($cart)) {
-            // set the owning side to null (unless already changed)
-            if ($cart->getAccount() === $this) {
-                $cart->setAccount(null);
-            }
         }
 
         return $this;
