@@ -25,6 +25,9 @@ class Cart
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
+    #[ORM\Column]
+    private ?bool $isPaid = false;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -70,10 +73,23 @@ class Cart
         return $this->account;
     }
 
-    public function setAccount(?Account $account): static
+    public function setAccount(Account $account): static
     {
         $this->account = $account;
 
         return $this;
     }
+
+    public function getIsPaid(): ?bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setPaid(bool $paid): static
+    {
+        $this->isPaid = $paid;
+
+        return $this;
+    }
+
 }

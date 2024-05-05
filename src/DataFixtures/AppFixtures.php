@@ -214,7 +214,10 @@ class AppFixtures extends Fixture
         $manager->persist($productCart3);
 
 
-
+        $cart1->setPaid(true);
+        $cart2->setPaid(true);
+        $cart3->setPaid(true);
+        $cart4->setPaid(false);
 
 
         $manager->persist($cart1);
