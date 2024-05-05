@@ -9,6 +9,10 @@
 
     {% endif %}
 
+    {% if forms is defined %}
+        {{ form(forms) }}
+    {% endif %}
+
     <table border="1">
 
         <tr>
@@ -46,20 +50,6 @@
                     </ul>
                 </td>
                 <td>{{ produit.price }}</td>
-
-                {% if forms is defined %}
-
-                    {{ form_start(forms[i]) }}
-
-                        <td>{{ form_row(forms[i].item_id) }}</td>
-
-                        <td>{{ form_row(forms[i].item_number) }}</td>
-
-                        <td>{{ form_row(forms[i].send) }}</td>
-
-                    {{ form_end(forms[i]) }}
-
-                {% endif %}
 
             </tr>
 

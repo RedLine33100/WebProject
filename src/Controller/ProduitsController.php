@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\Produit;
+use App\Form\AddItemFormType;
 use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -45,32 +46,24 @@ class ProduitsController extends AbstractController
         if(!is_null($account)){
 
             $message = "Not Submitted";
-            $cnt = 0;
-            $forms = [];
 
-            foreach ($products as $product){
-
-                $form = $this->generateForm($product);
-                $form->handleRequest($request);
-                if($form->get('send')->isClicked())
-                    $message = "SUBM";
-                $forms[$cnt] = $form->createView();
-
-                $cnt++;
-
+            $curForm = $this->createForm(AddItemFormType::class);
+            $curForm->handleRequest($request);
+            if($curForm->isSubmitted()){
+                $message = "SUB";
             }
 
             if($message == null) {
                 return $this->render('produits/index.html.twig', [
                     'controller_name' => 'ProduitsController',
                     'products' => $products,
-                    'forms' => $forms
+                    'forms' => $curForm
                 ]);
             }else{
                 return $this->render('produits/index.html.twig', [
                     'controller_name' => 'ProduitsController',
                     'products' => $products,
-                    'forms' => $forms,
+                    'forms' => $curForm,
                     'message' => $message
                 ]);
             }
