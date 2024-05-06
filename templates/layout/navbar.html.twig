@@ -16,8 +16,8 @@
 
                 {% if not app.user %}
 
-                <li><a href="{{ path('app_login') }}">Login</a></li>
-                <li><a href="{{ path('app_register') }}">Register</a></li>
+                    <li><a href="{{ path('app_login') }}">Login</a></li>
+                    <li><a href="{{ path('app_register') }}">Register</a></li>
 
                 {% else %}
 
@@ -28,6 +28,32 @@
             </ul>
 
         </li>
+
+        {% if app.user %}
+
+            {% if is_granted("ROLE_MOD") %}
+
+                <li><a href="{{ path('app_cart') }}">Moderation</a>
+
+                    <ul>
+                        <li>
+                            <a href="{{ path('app_admin_addproduct') }}">Ajouter Produit</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('app_modo_account') }}">Retirer User</a>
+                        </li>
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <li>
+                                <a href="{{ path('app_admin_account') }}">Changer moderateur</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                </li>
+
+            {% endif %}
+
+        {% endif %}
 
         <li><a href="{{ path('app_cart') }}">Panier</a></li>
 

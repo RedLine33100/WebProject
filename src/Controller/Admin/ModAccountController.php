@@ -81,7 +81,7 @@ class ModAccountController extends AbstractController
         }else{
             $form->add('account_id', HiddenType::class, ['attr'=>['value'=>$account->getId()]]);
         }
-        if(in_array('ROLE_MOD', $account->getRoles(), true)) {
+        if($account != null && in_array('ROLE_MOD', $account->getRoles(), true)) {
             $form->add('send', SubmitType::class, ['label' => 'Demote']);
         }else{
             $form->add('send', SubmitType::class, ['label' => 'Promote']);
