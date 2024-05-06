@@ -26,7 +26,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ProduitsController extends AbstractController
 {
 
-    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): string{
+    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): void{
 
         $cartRepository = $produitRepository->getRepository(Cart::class);
         $cart = $cartRepository->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
@@ -42,7 +42,8 @@ class ProduitsController extends AbstractController
         $product = $produitRepository->getRepository(Produit::class)->findOneBy(["id"=>$form->get('item_id')->getData()]);
         if($product == null){
             $produitRepository->flush();
-            return "fail";
+            $this->addFlash('error', 'Le produit est introuvable');
+            return;
         }
 
         $productCart = new ProduitCart();
@@ -58,7 +59,7 @@ class ProduitsController extends AbstractController
 
         $produitRepository->flush();
 
-        return "reussite";
+        $this->addFlash('win', 'Dans le panier');
 
     }
 
@@ -81,8 +82,8 @@ class ProduitsController extends AbstractController
                 $printMessage = $message;
 
             if($curForm->isSubmitted() && $curForm->isValid()){
-                $printMessage = $this->addItem($account, $curForm, $em);
-                return $this->redirectToRoute('app_produits_p', ["message"=>$printMessage]);
+                $this->addItem($account, $curForm, $em);
+                return $this->redirectToRoute('app_produits_p');
             }
 
             foreach ($products as $product){

@@ -40,10 +40,15 @@ class UserController extends AbstractController
             $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
             if($pays != null)
                 $account->setPays($pays);
+            else{
+                $this->addFlash('error', 'Le pays n\'existe pas');
+            }
         }
 
         $entityManager->persist($account);
         $entityManager->flush();
+
+        $this->addFlash('win', 'Updated !!');
 
     }
 

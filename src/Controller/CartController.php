@@ -82,6 +82,8 @@ class CartController extends AbstractController
             $entityManager->persist($cart);
             $entityManager->flush();
 
+            $this->addFlash('win', 'Payé');
+
             return $this->redirectToRoute('app_cart');
         }
 

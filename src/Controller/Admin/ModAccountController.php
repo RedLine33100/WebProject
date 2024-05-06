@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Account;
+use App\Form\UserDeleteFormType;
+use App\Form\UserDemodFormType;
+use App\Form\UserModFormType;
 use App\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,18 +20,6 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ModAccountController extends AbstractController
 {
 
-    public function generateModoForm(?Account $account):FormInterface
-    {
-        $form = $this->createFormBuilder();
-        if($account == null) {
-            $form->add('account_id', HiddenType::class);
-        }else{
-            $form->add('account_id', HiddenType::class, ['attr'=>['value'=>$account->getId()]]);
-        }
-        $form->add('send', SubmitType::class, ['label'=>'Supprimer']);
-        return $form->getForm();
-    }
-
     public function deleteUser(FormInterface $form, EntityManagerInterface $entityManager)
     {
         $accountID = $form->get('account_id')->getData();
@@ -38,6 +29,7 @@ class ModAccountController extends AbstractController
         }
         $entityManager->remove($account);
         $entityManager->flush();
+        $this->addFlash('win', 'User supprimé');
     }
 
     #[Route('/modo/account', name: 'app_modo_account')]
@@ -48,7 +40,7 @@ class ModAccountController extends AbstractController
             return $this->redirectToRoute('app_produits_p');
         }
 
-        $testForm = $this->generateModoForm(null);
+        $testForm = $this->createForm(UserDeleteFormType::class);
         $testForm->handleRequest($request);
         if($testForm->isSubmitted() && $testForm->isValid()){
             $this->deleteUser($testForm, $entityManager);
@@ -62,7 +54,9 @@ class ModAccountController extends AbstractController
 
         foreach ($accounts as $checkAccount){
             if(!in_array('ROLE_MOD', $checkAccount->getRoles(), true)) {
-                $forms[$cnt] = $this->generateModoForm($checkAccount)->createView();
+                $newForm = $this->createForm(UserDeleteFormType::class);
+                $newForm->get('account_id')->setData($checkAccount->getId());
+                $forms[$cnt] = $newForm->createView();
             }
             $cnt++;
         }
@@ -74,21 +68,6 @@ class ModAccountController extends AbstractController
         ]);
     }
 
-    public function generateAdminForm(?Account $account) : FormInterface{
-        $form = $this->createFormBuilder();
-        if($account == null) {
-            $form->add('account_id', HiddenType::class);
-        }else{
-            $form->add('account_id', HiddenType::class, ['attr'=>['value'=>$account->getId()]]);
-        }
-        if($account != null && in_array('ROLE_MOD', $account->getRoles(), true)) {
-            $form->add('send', SubmitType::class, ['label' => 'Demote']);
-        }else{
-            $form->add('send', SubmitType::class, ['label' => 'Promote']);
-        }
-        return $form->getForm();
-    }
-
     public function updateAdmin(FormInterface $form, EntityManagerInterface $entityManager) : void
     {
         $accountID = $form->get('account_id')->getData();
@@ -96,12 +75,19 @@ class ModAccountController extends AbstractController
         if($account == null){
             return;
         }
+        $mod = false;
         if(in_array('ROLE_MOD', $account->getRoles(), true))
             $account->removeRole("ROLE_MOD");
-        else
+        else {
             $account->addRole("ROLE_MOD");
+            $mod = true;
+        }
         $entityManager->persist($account);
         $entityManager->flush();
+        if($mod)
+            $this->addFlash('win', 'Le compte est devenue moderateur');
+        else
+            $this->addFlash('win', 'Le compte n\'est plus moderateur');
     }
 
     #[Route('/admin/account', name: 'app_admin_account')]
@@ -112,7 +98,7 @@ class ModAccountController extends AbstractController
             return $this->redirectToRoute('app_produits_p');
         }
 
-        $testForm = $this->generateAdminForm(null);
+        $testForm = $this->createForm(UserModFormType::class);
         $testForm->handleRequest($request);
         if($testForm->isSubmitted() && $testForm->isValid()){
             $this->updateAdmin($testForm, $entityManager);
@@ -126,7 +112,17 @@ class ModAccountController extends AbstractController
 
         foreach ($accounts as $checkAccount){
             if(!in_array('ROLE_ADMIN', $checkAccount->getRoles(), true)) {
-                $forms[$cnt] = $this->generateAdminForm($checkAccount)->createView();
+                $newForm = null;
+
+                if(in_array('ROLE_MOD', $checkAccount->getRoles(), true)){
+                    $newForm = $this->createForm(UserDemodFormType::class);
+                }else{
+                    $newForm = $this->createForm(UserModFormType::class);
+                }
+
+                $newForm->get('account_id')->setData($checkAccount->getId());
+
+                $forms[$cnt] = $newForm->createView();
             }
             $cnt++;
         }

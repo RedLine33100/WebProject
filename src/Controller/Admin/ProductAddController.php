@@ -45,6 +45,8 @@ class ProductAddController extends AbstractController
             $entityManager->persist($newProduct);
             $entityManager->flush();
 
+            $this->addFlash('win', 'Produit ajoute');
+
             return $this->redirectToRoute('app_produits_p');
 
         }

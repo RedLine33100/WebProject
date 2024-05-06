@@ -60,3 +60,19 @@
     </ul>
 
 </nav>
+
+{% for flashMessage in app.session.flashbag.get('error') %}
+
+    <div style="background-color: red">
+        {{ flashMessage }}
+    </div>
+
+{% endfor %}
+
+{% for flashMessage in app.session.flashbag.get('win') %}
+
+    <div style="background-color: green">
+        {{ flashMessage }}
+    </div>
+
+{% endfor %}
