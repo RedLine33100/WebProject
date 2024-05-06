@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Account;
+use App\Entity\Pays;
+use App\Form\UserFormType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+
+class UserController extends AbstractController
+{
+
+    public function update(#[CurrentUser] Account $account, UserPasswordHasherInterface $passwordHasher, FormInterface $form, EntityManagerInterface $entityManager)
+    {
+
+        if(!$form->get('username')->getData()){
+            $account->setUsername($form->get('username')->getData());
+        }
+
+        if(!$form->get('address')->getData()){
+            $account->setAddress($form->get('address')->getData());
+        }
+
+        if(!$form->get('email')->getData()){
+            $account->setEmail($form->get('email')->getData());
+        }
+
+        if(!$form->get('password')->getData()){
+            $account->setPassword($passwordHasher->hashPassword($account, $form->get('password')->getData()));
+        }
+
+        if(!$form->get('pays')->getData()){
+            $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
+            if($pays != null)
+                $account->setPays($pays);
+        }
+
+        $entityManager->persist($account);
+        $entityManager->flush();
+
+    }
+
+    #[Route('/user', name: 'app_user')]
+    public function index(#[CurrentUser] Account $account, UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $entityManager): Response
+    {
+
+        $form = $this->createForm(UserFormType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $this->update($account, $passwordHasher, $form, $entityManager);
+            return $this->redirectToRoute("app_user");
+        }
+
+        if(!$form->get('username')->getData()){
+            $form->get('username')->setData($account->getUsername());
+        }
+
+        if(!$form->get('address')->getData()){
+            $form->get('address')->setData($account->getAddress());
+        }
+
+        if(!$form->get('email')->getData()){
+            $form->get('email')->setData($account->getEmail());
+        }
+
+        if(!$form->get('pays')->getData()){
+            $form->get('pays')->setData($account->getPays()->getId());
+        }
+
+        return $this->render('user/index.html.twig', [
+            'controller_name' => 'UserController',
+            'forms'=>$form
+        ]);
+    }
+}

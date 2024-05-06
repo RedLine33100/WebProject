@@ -7,6 +7,7 @@ use App\Entity\Cart;
 use App\Entity\Produit;
 use App\Entity\ProduitCart;
 use App\Form\AddItemFormType;
+use App\Form\ProductCartAddFormType;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,19 +25,6 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[Route('/produits', name: 'app_produits')]
 class ProduitsController extends AbstractController
 {
-
-    public function generateForm(?Produit $produit):FormInterface
-    {
-        $form = $this->createFormBuilder();
-        if($produit == null) {
-            $form->add('item_id', HiddenType::class);
-        }else{
-            $form->add('item_id', HiddenType::class, ['attr'=>['value'=>$produit->getId()]]);
-        }
-        $form->add('item_number', IntegerType::class);
-        $form->add('send', SubmitType::class, ['label'=>'Ajouter']);
-        return $form->getForm();
-    }
 
     public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): string{
 
@@ -85,7 +73,7 @@ class ProduitsController extends AbstractController
             $tab = [];
             $cnt = 0;
 
-            $curForm = $this->generateForm(null);
+            $curForm = $this->createForm(ProductCartAddFormType::class);
             $curForm->handleRequest($request);
             $printMessage = "DEF";
 
@@ -98,7 +86,9 @@ class ProduitsController extends AbstractController
             }
 
             foreach ($products as $product){
-                $tab[$cnt] = $this->generateForm($product)->createView();
+                $createdForm = $this->createForm(ProductCartAddFormType::class);
+                $createdForm->get('item_id')->setData($product->getId());
+                $tab[$cnt] = $createdForm->createView();
                 $cnt++;
             }
 

@@ -6,11 +6,12 @@ use App\Entity\Account;
 use App\Entity\Cart;
 use App\Entity\Produit;
 use App\Entity\ProduitCart;
+use App\Form\ProductCartPaidFormType;
+use App\Form\ProductCartRemoveFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,24 +21,6 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class CartController extends AbstractController
 {
-    public function generateForm(?ProduitCart $produitCart):FormInterface
-    {
-        $form = $this->createFormBuilder();
-        if($produitCart == null) {
-            $form->add('pID', HiddenType::class);
-        }else{
-            $form->add('pID', HiddenType::class, ['attr'=>["value"=>$produitCart->getId()]]);
-        }
-        $form->add('send', SubmitType::class, ['label'=>"Supprimer"]);
-        return $form->getForm();
-    }
-
-    public function generatePaidForm():FormInterface
-    {
-        $form = $this->createFormBuilder();
-        $form->add('paid', SubmitType::class, ['label'=>"Payer (Archiver)"]);
-        return $form->getForm();
-    }
 
     #[Route('/cart', name: 'app_cart')]
     public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager): Response
@@ -56,7 +39,7 @@ class CartController extends AbstractController
             $message = "POP: ".$cart->getItems()->count();
         }
 
-        $suppFormCheck = $this->generateForm(null);
+        $suppFormCheck = $this->createForm(ProductCartRemoveFormType::class);
         $suppFormCheck->handleRequest($request);
 
         if($suppFormCheck->isSubmitted() && $suppFormCheck->isValid()){
@@ -84,12 +67,14 @@ class CartController extends AbstractController
         $cnt = 0;
         foreach ($cart->getItems() as $pCart){
 
-            $suppForms[$cnt] = $this->generateForm($pCart)->createView();
+            $newForm = $this->createForm(ProductCartRemoveFormType::class);
+            $newForm->get('pID')->setData($pCart->getId());
+            $suppForms[$cnt] = $newForm->createView();
             $cnt++;
 
         }
 
-        $paidForm = $this->generatePaidForm();
+        $paidForm = $this->createForm(ProductCartPaidFormType::class);
         $paidForm->handleRequest($request);
 
         if($paidForm->isSubmitted()){
