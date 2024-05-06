@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
         $manager->persist($pays3);
 
         $modAccount = new Account();
-        $modAccount->setName("GentleMates")
+        $modAccount->setUsername("GentleMates")
             ->setAddress("OMG je suis à la rue")
             ->setEmail("contact@gm.com")
             ->setPassword("$2y$13\$pPvWkKysDYM.CVSMnUJc3uhA.rh8yxwm/bl821I0p7kQxC8vhsNxu")
@@ -42,7 +42,7 @@ class AppFixtures extends Fixture
         $manager->persist($modAccount);
 
         $adminAccount = new Account();
-        $adminAccount->setName("BeauGosse")
+        $adminAccount->setUsername("BeauGosse")
             ->setAddress("OMG je suis à la rue")
             ->setEmail("beaugosse@gm.com")
             ->setPassword("$2y$13\$DsOLy1UzPIOCrIT1I1Z8ju/AshiDy0IuigASMk1Nlw..INgOd5Rk6")
@@ -55,7 +55,7 @@ class AppFixtures extends Fixture
 
 
         $sadmin = new Account();
-        $sadmin->setName("sadmin")
+        $sadmin->setUsername("sadmin")
             ->setAddress("Il m'ont rien dits")
             ->setEmail("JSPfrere@aidezmoi.org")
             ->setPassword("$2y$13\$Qitmy5PIrtzuwneZrMhlxORM7GZcZCaDNJdW6iGsLft8J0pdPLi6K")
@@ -68,7 +68,7 @@ class AppFixtures extends Fixture
 
 
         $gilles = new Account();
-        $gilles->setName("gilles")
+        $gilles->setUsername("gilles")
             ->setAddress("COMMENT je devine?")
             ->setEmail("OUECHJSPMOI@aidezmoi.org")
             ->setPassword("$2y$13\$sKoS.BE4Yxas2sl2E8X.HuHv2G0wEQ/t5XLLryMYAPrV9Vlj5BXuu")
@@ -80,7 +80,7 @@ class AppFixtures extends Fixture
 
 
         $rita = new Account();
-        $rita->setName("rita")
+        $rita->setUsername("rita")
             ->setAddress("Unknown")
             ->setEmail("rita@mitsuko.org")
             ->setPassword("$2y$13\$zU3hRDk8dfVPAjjHzIiR9OitGpV.C/SwmuxLd1rKQnFwNDECjgxc2")
@@ -90,7 +90,7 @@ class AppFixtures extends Fixture
 
 
         $boumediene = new Account();
-        $boumediene->setName("boumediene")
+        $boumediene->setUsername("boumediene")
             ->setAddress("dzadehuir")
             ->setEmail("boumedine@gmail.com")
             ->setPassword("$2y$13\$bWp1QjxPc6vsP3o4eHqDre68n63nPVjrJilDmSnaOkZCgusHnNEmq")
@@ -100,7 +100,7 @@ class AppFixtures extends Fixture
 
 
         $account1 = new Account();
-        $account1->setName("HugoDecrypte")
+        $account1->setUsername("HugoDecrypte")
             ->setAddress("rue Hugo Decrypte, 33100 Paris")
             ->setEmail("contact@hugodecrypte.com")
             ->setPassword("\$2y\$13\$jkovLPSyQrl06kbkXLT7R.BzZYJZcPRkoNrw9ZcHR91P6CEFLHGpO")
@@ -111,7 +111,7 @@ class AppFixtures extends Fixture
 
 
         $account2 = new Account();
-        $account2->setName("Modric")
+        $account2->setUsername("Modric")
             ->setEmail("jesuismodric@gmail.com")
             ->setAddress("Rue du quiditch, 15000 Poudlard")
             ->setPassword("\$2y\$13\$aOP40b8mH4znW7nMWIBILukPRxXuMkojO9F3fho4zCfwn948tRPdi")
@@ -122,7 +122,7 @@ class AppFixtures extends Fixture
 
 
         $account3 = new Account();
-        $account3->setName("Lucas")
+        $account3->setUsername("Lucas")
             ->setEmail("jemassumecommejesuis@defendonsnosdroits.org")
             ->setAddress("1 rue de la liberte, 80000 Paris")
             ->setPassword("\$2y\$13\$/Le5Xdhxi31Y22o48KoF2.WYJBnwvypTpOSlnMn7YuznZMWVHxkKC")
@@ -132,7 +132,7 @@ class AppFixtures extends Fixture
 
 
         $account4 = new Account();
-        $account4->setName("Freedom")
+        $account4->setUsername("Freedom")
             ->setEmail("pleasedonothelpmeimfree@gmail.com")
             ->setAddress("15 rue de la liberte, 14000 Ciel")
             ->setPassword("\$2y\$13\$QtpGMKOTaJlUYLB7u1SHa.9EzFGhjxP1BidTZhLmZOQUsR6XDQhly")

@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\Pays;
-use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,11 +22,10 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-#[Route('/account', name: 'app_account')]
-class AccountController extends AbstractController
+class SecurityController extends AbstractController
 {
-    #[Route('/login', name: '_login')]
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -35,18 +33,16 @@ class AccountController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('account/login.html.twig', [
-              'controller_name' => 'LoginController',
-              'last_username' => $lastUsername,
-              'error'         => $error,
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
         ]);
     }
 
-    #[Route('/logout', name: '_logout')]
-    public function logout(Security $security): Response
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
     {
-        $security->logout();
-        return $this->redirectToRoute('app_account_login');
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
     public function createRegisterForms(array $paysArr) : FormInterface
@@ -122,7 +118,7 @@ class AccountController extends AbstractController
         return $form->getForm();
     }
 
-    #[Route('/register', name: '_register')]
+    #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
     {
         $user = new Account();
@@ -136,7 +132,7 @@ class AccountController extends AbstractController
             if($pays != null) {
 
                 $user->setPays($pays);
-                $user->setName($form->get('name')->getData());
+                $user->setUsername($form->get('name')->getData());
                 $user->setAddress($form->get('address')->getData());
                 $user->setEmail($form->get('email')->getData());
 
@@ -157,7 +153,7 @@ class AccountController extends AbstractController
             }
         }
 
-        return $this->render('account/register.html.twig', [
+        return $this->render('security/register.html.twig', [
             'registrationForm' => $form,
         ]);
     }

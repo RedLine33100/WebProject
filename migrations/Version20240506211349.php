@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240506002744 extends AbstractMigration
+final class Version20240506211349 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,10 +20,10 @@ final class Version20240506002744 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE account (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, pays_id INTEGER NOT NULL, email VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
-        , password VARCHAR(255) NOT NULL, name VARCHAR(20) NOT NULL, address VARCHAR(255) NOT NULL, CONSTRAINT FK_7D3656A4A6E44244 FOREIGN KEY (pays_id) REFERENCES pays (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('CREATE TABLE account (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, pays_id INTEGER NOT NULL, username VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
+        , password VARCHAR(255) NOT NULL, address VARCHAR(255) NOT NULL, email VARCHAR(180) NOT NULL, CONSTRAINT FK_7D3656A4A6E44244 FOREIGN KEY (pays_id) REFERENCES pays (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_7D3656A4A6E44244 ON account (pays_id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON account (email)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME ON account (username)');
         $this->addSql('CREATE TABLE cart (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_account INTEGER NOT NULL, is_paid BOOLEAN NOT NULL, CONSTRAINT FK_BA388B7A3ABFFD4 FOREIGN KEY (id_account) REFERENCES account (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_BA388B7A3ABFFD4 ON cart (id_account)');
         $this->addSql('CREATE TABLE pays (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, short_name VARCHAR(10) NOT NULL, name VARCHAR(100) NOT NULL)');
