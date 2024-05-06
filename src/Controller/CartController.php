@@ -9,6 +9,7 @@ use App\Entity\ProduitCart;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
@@ -23,9 +24,9 @@ class CartController extends AbstractController
     {
         $form = $this->createFormBuilder();
         if($produitCart == null) {
-            $form->add('pID', IntegerType::class, ['disabled' => true]);
+            $form->add('pID', HiddenType::class);
         }else{
-            $form->add('pID', IntegerType::class, ['disabled' => true, 'attr'=>["value"=>$produitCart->getId()]]);
+            $form->add('pID', HiddenType::class, ['attr'=>["value"=>$produitCart->getId()]]);
         }
         $form->add('send', SubmitType::class, ['label'=>"Supprimer"]);
         return $form->getForm();

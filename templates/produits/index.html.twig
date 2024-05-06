@@ -23,7 +23,6 @@
 
             {% if forms is defined %}
 
-                <th>Produit ID</th>
                 <th>Nombre</th>
                 <th>Ajouter</th>
 
@@ -51,8 +50,6 @@
                 {% if forms is defined %}
 
                     {{ form_start(forms[i]) }}
-
-                        <td>{{ form_row(forms[i].item_id) }}</td>
 
                         <td>{{ form_row(forms[i].item_number) }}</td>
 

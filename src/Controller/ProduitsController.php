@@ -11,6 +11,7 @@ use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
@@ -28,9 +29,9 @@ class ProduitsController extends AbstractController
     {
         $form = $this->createFormBuilder();
         if($produit == null) {
-            $form->add('item_id', IntegerType::class, ['disabled' => true]);
+            $form->add('item_id', HiddenType::class, []);
         }else{
-            $form->add('item_id', IntegerType::class, ['disabled' => true, 'attr'=>['value'=>$produit->getId()]]);
+            $form->add('item_id', HiddenType::class, ['attr'=>['value'=>$produit->getId()]]);
         }
         $form->add('item_number', IntegerType::class);
         $form->add('send', SubmitType::class, ['label'=>'Ajouter']);

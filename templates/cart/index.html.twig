@@ -22,8 +22,6 @@
 
             <th>Amount</th>
 
-            <th>CP ID</th>
-
             <th>Supprimer</th>
 
         </tr>
@@ -37,7 +35,6 @@
                 <th>{{ cartProduct.produit.price }}</th>
                 <th>{{ cartProduct.amount }}</th>
                 {{ form_start(suppForms[i]) }}
-                <th>{{ form_row(suppForms[i].pID) }}</th>
                 <th>{{ form_row(suppForms[i].send) }}</th>
                 {{ form_end(suppForms[i]) }}
 
