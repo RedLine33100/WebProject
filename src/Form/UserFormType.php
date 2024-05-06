@@ -31,9 +31,10 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Lucas est interdit comme nom, < 6',
+                        'minMessage' => 'Lucas est interdit comme nom, minimum {{ limit }}',
                         // max length allowed by Symfony for security reasons
-                        'max' => 4096,
+                        'max' => 20,
+                        'maxMessage'=>'Anticonstitutionnellement est interdit comme nom, maximum {{ limit }}'
                     ]),
                 ],
             ])
@@ -59,8 +60,9 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Merci de donner une address',
+                        'minMessage' => 'Merci de donner une address de minimum {{ limit }} caracteres',
                         'max' => 4096,
+                        'maxMessage'=> 'Merci de donner une address de maximum {{ limit }} caracteres'
                     ]),
                 ],
             ])
@@ -70,6 +72,12 @@ class UserFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Et on te l\'envoie ou ?',
                     ]),
+                    new Length([
+                        'min'=>6,
+                        'minMessage' => 'Merci de donner une address mail de minimum {{ limit }} caracteres',
+                        'max'=>30,
+                        'maxMessage' => 'Merci de donner une address mail de maximum {{ limit }} caracteres',
+                    ])
                 ],
             ])
             ->add('pays', EntityType::class, [
