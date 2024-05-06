@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Account;
 use App\Entity\Pays;
 use App\Entity\Produit;
-use App\Form\ProductAddFormType;
+use App\Form\ProductFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ class ProductAddController extends AbstractController
             return $this->redirectToRoute('app_produits_p');
         }
 
-        $form = $this->createForm(ProductAddFormType::class);
+        $form = $this->createForm(ProductFormType::class);
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
@@ -32,6 +32,7 @@ class ProductAddController extends AbstractController
             $newProduct->setName($form->get('name')->getData());
             $newProduct->setPrice($form->get('price')->getData());
             $newProduct->setDescription($form->get('description')->getData());
+            $newProduct->setNumber($form->get('number')->getData());
 
             foreach ($form->get('pays')->getData() as $pays){
 

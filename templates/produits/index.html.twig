@@ -5,8 +5,7 @@
     <h1>Produits:</h1>
 
     {% if message is defined %}
-    <h3>{{ message }}</h3>
-
+        <h3>{{ message }}</h3>
     {% endif %}
 
     <table border="1">
@@ -19,6 +18,8 @@
 
             <th>Pays</th>
 
+            <th>Restant</th>
+
             <th>Price</th>
 
             {% if forms is defined %}
@@ -26,6 +27,12 @@
                 <th>Nombre</th>
                 <th>Ajouter</th>
 
+            {% endif %}
+
+            {% if app.user %}
+                {% if is_granted("ROLE_MOD") %}
+                    <th>Modifier</th>
+                {% endif %}
             {% endif %}
 
         </tr>
@@ -45,6 +52,7 @@
                         {% endfor %}
                     </ul>
                 </td>
+                <td>{{ produit.number }}</td>
                 <td>{{ produit.price }}</td>
 
                 {% if forms is defined %}
@@ -57,6 +65,13 @@
 
                     {{ form_end(forms[i]) }}
 
+                {% endif %}
+
+                {% if app.user %}
+                    {% if is_granted("ROLE_MOD") %}
+                        {% set ma = {"id": produit.id} %}
+                        <td><a href="{{ path('app_product_modify', ma) }}">Modifier</a> </td>
+                    {% endif %}
                 {% endif %}
 
             </tr>

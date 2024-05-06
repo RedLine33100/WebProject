@@ -46,8 +46,18 @@ class ProduitsController extends AbstractController
             return;
         }
 
+        $amount = $form->get('item_number')->getData();
+
+        if($product->getNumber() < $amount){
+            $produitRepository->flush();
+            $this->addFlash('error', 'Impossible, pas assez de produit');
+            return;
+        }
+
+        $product->setNumber($product->getNumber()-$amount);
+
         $productCart = new ProduitCart();
-        $productCart->setAmount($form->get('item_number')->getData());
+        $productCart->setAmount($amount);
         $productCart->setProduit($product);
         $productCart->setCart($cart);
         $productCart->setPays($product->getPays()->first());
@@ -55,6 +65,7 @@ class ProduitsController extends AbstractController
         $cart->addItem($productCart);
 
         $produitRepository->persist($cart);
+        $produitRepository->persist($product);
         $produitRepository->persist($productCart);
 
         $produitRepository->flush();

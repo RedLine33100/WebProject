@@ -145,6 +145,7 @@ class AppFixtures extends Fixture
         $produit1->setName("Ananas")
             ->setDescription("Hmm les ananas")
             ->setPrice(5.0)
+            ->setNumber(10)
             ->addPay($pays3);
 
         $manager->persist($produit1);
@@ -156,6 +157,7 @@ class AppFixtures extends Fixture
             ->setPrice(2.0)
             ->addPay($pays3)
             ->addPay($pays2)
+            ->setNumber(5)
             ->addPay($pays1);
 
         $manager->persist($produit2);
@@ -166,6 +168,7 @@ class AppFixtures extends Fixture
             ->setDescription("Les meilleures oranges du monde (sauf USA)")
             ->setPrice(5.0)
             ->addPay($pays1)
+            ->setNumber(2)
             ->addPay($pays2);
 
         $manager->persist($produit3);
@@ -175,6 +178,7 @@ class AppFixtures extends Fixture
         $produit4->setName("Paracetamol")
             ->setDescription("Ne pas en abuser, demander conseil au Pharmacien")
             ->setPrice(12.2)
+            ->setNumber(6)
             ->addPay($pays1);
 
         $manager->persist($produit4);

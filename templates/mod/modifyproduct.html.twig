@@ -1,0 +1,7 @@
+{% extends 'layout/base.html.twig' %}
+{% block body %}
+    <h1>Modifier le produit</h1>
+    {% if updateForm is defined %}
+        {{ form(updateForm) }}
+    {% endif %}
+{% endblock %}

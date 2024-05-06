@@ -49,6 +49,12 @@
         {% if paidButton is defined %}
         {{ form(paidButton) }}
             {% endif %}
+        {% if clearButton is defined %}
+            {{ form(clearButton) }}
+        {% endif %}
+        {% if prixTotal is defined %}
+            <h4>Prix total: {{ prixTotal }}</h4>
+        {% endif %}
 
     {% endif %}
 

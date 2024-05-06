@@ -24,6 +24,9 @@ class Produit
     #[ORM\Column]
     private ?float $price = null;
 
+    #[ORM\Column]
+    private int $number = 0;
+
     /**
      * @var Collection<int, Pays>
      */
@@ -97,6 +100,16 @@ class Produit
     {
         $this->pays->removeElement($pay);
 
+        return $this;
+    }
+
+    public function getNumber() :int
+    {
+        return $this->number;
+    }
+
+    public function setNumber(int $number) :Produit{
+        $this->number = $number;
         return $this;
     }
 }
