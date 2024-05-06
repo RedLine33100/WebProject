@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Account;
 use App\Entity\Pays;
@@ -15,9 +15,13 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class ProductAddController extends AbstractController
 {
-    #[Route('/produits/add', name: 'app_produits_add')]
+    #[Route('/admin/addproduct', name: 'app_admin_addproduct')]
     public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        if(!in_array('ROLE_MOD', $account->getRoles(), true)){
+            return $this->redirectToRoute('app_produits_p');
+        }
 
         $form = $this->createForm(ProductAddFormType::class);
 
@@ -45,7 +49,7 @@ class ProductAddController extends AbstractController
 
         }
 
-        return $this->render('product_add/index.html.twig', [
+        return $this->render('mod/productadd.html.twig', [
             'controller_name' => 'ProductAddController',
             'createForm'=>$form->createView()
         ]);

@@ -12,7 +12,9 @@ use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_NAME', fields: ['name'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['name'], message: 'There is already an account with this name')]
 class Account implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -35,7 +37,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
@@ -53,6 +55,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->roles = ["ROLE_USER"];
         $this->carts = new ArrayCollection();
     }
 
@@ -115,8 +118,6 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -129,6 +130,21 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function addRole(string $role)
+    {
+        $this->roles[] = $role;
+    }
+
+    public function removeRole(string $role){
+        $newRoles = [];
+        foreach ($this->roles as $addRole){
+            if($role == $addRole)
+                continue;
+            $newRoles[]=$addRole;
+        }
+        $this->setRoles($newRoles);
     }
 
     /**

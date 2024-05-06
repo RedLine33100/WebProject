@@ -31,6 +31,74 @@ class AppFixtures extends Fixture
             ->setShortName("SP");
         $manager->persist($pays3);
 
+        $modAccount = new Account();
+        $modAccount->setName("GentleMates")
+            ->setAddress("OMG je suis à la rue")
+            ->setEmail("contact@gm.com")
+            ->setPassword("$2y$13\$pPvWkKysDYM.CVSMnUJc3uhA.rh8yxwm/bl821I0p7kQxC8vhsNxu")
+            ->setPays($pays1);
+        $modAccount->addRole("ROLE_MOD");
+
+        $manager->persist($modAccount);
+
+        $adminAccount = new Account();
+        $adminAccount->setName("BeauGosse")
+            ->setAddress("OMG je suis à la rue")
+            ->setEmail("beaugosse@gm.com")
+            ->setPassword("$2y$13\$DsOLy1UzPIOCrIT1I1Z8ju/AshiDy0IuigASMk1Nlw..INgOd5Rk6")
+            ->setPays($pays1);
+        $adminAccount->addRole("ROLE_MOD");
+        $adminAccount->addRole("ROLE_ADMIN");
+
+        $manager->persist($adminAccount);
+
+
+
+        $sadmin = new Account();
+        $sadmin->setName("sadmin")
+            ->setAddress("Il m'ont rien dits")
+            ->setEmail("JSPfrere@aidezmoi.org")
+            ->setPassword("$2y$13\$Qitmy5PIrtzuwneZrMhlxORM7GZcZCaDNJdW6iGsLft8J0pdPLi6K")
+            ->setPays($pays1);
+
+        $sadmin->addRole("ROLE_MOD");
+        $sadmin->addRole("ROLE_ADMIN");
+
+        $manager->persist($sadmin);
+
+
+        $gilles = new Account();
+        $gilles->setName("gilles")
+            ->setAddress("COMMENT je devine?")
+            ->setEmail("OUECHJSPMOI@aidezmoi.org")
+            ->setPassword("$2y$13\$sKoS.BE4Yxas2sl2E8X.HuHv2G0wEQ/t5XLLryMYAPrV9Vlj5BXuu")
+            ->setPays($pays1);
+        $gilles->addRole("ROLE_MOD");
+
+        $manager->persist($gilles);
+
+
+
+        $rita = new Account();
+        $rita->setName("rita")
+            ->setAddress("Unknown")
+            ->setEmail("rita@mitsuko.org")
+            ->setPassword("$2y$13\$zU3hRDk8dfVPAjjHzIiR9OitGpV.C/SwmuxLd1rKQnFwNDECjgxc2")
+            ->setPays($pays1);
+
+        $manager->persist($rita);
+
+
+        $boumediene = new Account();
+        $boumediene->setName("boumediene")
+            ->setAddress("dzadehuir")
+            ->setEmail("boumedine@gmail.com")
+            ->setPassword("$2y$13\$bWp1QjxPc6vsP3o4eHqDre68n63nPVjrJilDmSnaOkZCgusHnNEmq")
+            ->setPays($pays1);
+
+        $manager->persist($boumediene);
+
+
         $account1 = new Account();
         $account1->setName("HugoDecrypte")
             ->setAddress("rue Hugo Decrypte, 33100 Paris")

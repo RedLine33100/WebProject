@@ -8,7 +8,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\Account
-                property: email
+                property: name
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -17,11 +17,14 @@ security:
             lazy: true
             provider: app_user_provider
             form_login:
-                login_path: app_account_login
-                check_path: app_account_login
-                enable_csrf: false
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                username_parameter: name
             logout:
-                path: app_account_logout
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
                 # where to redirect after logout
                 # target: app_any_route
 

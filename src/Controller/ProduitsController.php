@@ -29,7 +29,7 @@ class ProduitsController extends AbstractController
     {
         $form = $this->createFormBuilder();
         if($produit == null) {
-            $form->add('item_id', HiddenType::class, []);
+            $form->add('item_id', HiddenType::class);
         }else{
             $form->add('item_id', HiddenType::class, ['attr'=>['value'=>$produit->getId()]]);
         }
@@ -38,7 +38,7 @@ class ProduitsController extends AbstractController
         return $form->getForm();
     }
 
-    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): Response{
+    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): string{
 
         $cartRepository = $produitRepository->getRepository(Cart::class);
         $cart = $cartRepository->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
@@ -54,7 +54,7 @@ class ProduitsController extends AbstractController
         $product = $produitRepository->getRepository(Produit::class)->findOneBy(["id"=>$form->get('item_id')->getData()]);
         if($product == null){
             $produitRepository->flush();
-            return $this->redirectToRoute('app_welcome');
+            return "fail";
         }
 
         $productCart = new ProduitCart();
@@ -70,12 +70,12 @@ class ProduitsController extends AbstractController
 
         $produitRepository->flush();
 
-        return $this->redirectToRoute('app_cart');
+        return "reussite";
 
     }
 
     #[Route('/', name: '_p')]
-    public function index(#[CurrentUser] ?Account $account, Request $request, EntityManagerInterface $em): Response
+    public function index(#[CurrentUser] ?Account $account, Request $request, EntityManagerInterface $em, ?string $message): Response
     {
 
         $products = $em->getRepository(Produit::class)->findAll();
@@ -87,8 +87,14 @@ class ProduitsController extends AbstractController
 
             $curForm = $this->generateForm(null);
             $curForm->handleRequest($request);
+            $printMessage = "DEF";
+
+            if($message)
+                $printMessage = $message;
+
             if($curForm->isSubmitted() && $curForm->isValid()){
-                return $this->addItem($account, $curForm, $em);
+                $printMessage = $this->addItem($account, $curForm, $em);
+                return $this->redirectToRoute('app_produits_p', ["message"=>$printMessage]);
             }
 
             foreach ($products as $product){
@@ -96,9 +102,7 @@ class ProduitsController extends AbstractController
                 $cnt++;
             }
 
-            $message = null;
-
-            if($message == null) {
+            if($printMessage == null) {
                 return $this->render('produits/index.html.twig', [
                     'controller_name' => 'ProduitsController',
                     'products' => $products,
@@ -109,7 +113,7 @@ class ProduitsController extends AbstractController
                     'controller_name' => 'ProduitsController',
                     'products' => $products,
                     'forms' => $tab,
-                    'message' => $message
+                    'message' => $printMessage
                 ]);
             }
 

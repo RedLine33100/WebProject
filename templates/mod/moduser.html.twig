@@ -1,0 +1,43 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block body %}
+    <h1>User</h1>
+    <table>
+        <tr>
+
+            <td>Nom</td>
+            <td>Mail</td>
+            <td>Address</td>
+            <td>Pays</td>
+            <td>Supprimer</td>
+
+        </tr>
+
+        {% if accounts is defined %}
+
+            {% set i = 0 %}
+
+            {% for account in accounts %}
+
+                <tr>
+
+                    <td>{{ account.name }}</td>
+                    <td>{{ account.email }}</td>
+                    <td>{{ account.address }}</td>
+                    <td>{{ account.pays.name }}</td>
+                    {% if forms[i] is defined %}
+                        {{ form_start(forms[i]) }}
+                        <td>{{ form_row(forms[i].send) }}</td>
+                        {{ form_end(forms[i]) }}
+                    {% endif %}
+
+                </tr>
+
+                {% set i = i+1 %}
+
+            {% endfor %}
+
+        {% endif %}
+
+    </table>
+{% endblock %}
