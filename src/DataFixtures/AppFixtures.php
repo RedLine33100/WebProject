@@ -16,45 +16,6 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
-        $account1 = new Account();
-        $account1->setName("HugoDecrypte")
-            ->setAddress("rue Hugo Decrypte, 33100 Paris")
-            ->setEmail("contact@hugodecrypte.com")
-            ->setPassword("\$2y\$13\$jkovLPSyQrl06kbkXLT7R.BzZYJZcPRkoNrw9ZcHR91P6CEFLHGpO");
-
-        $manager->persist($account1);
-
-
-
-        $account2 = new Account();
-        $account2->setName("Modric")
-            ->setEmail("jesuismodric@gmail.com")
-            ->setAddress("Rue du quiditch, 15000 Poudlard")
-            ->setPassword("\$2y\$13\$aOP40b8mH4znW7nMWIBILukPRxXuMkojO9F3fho4zCfwn948tRPdi");
-
-        $manager->persist($account2);
-
-
-
-        $account3 = new Account();
-        $account3->setName("Lucas")
-            ->setEmail("jemassumecommejesuis@defendonsnosdroits.org")
-            ->setAddress("1 rue de la liberte, 80000 Paris")
-            ->setPassword("\$2y\$13\$/Le5Xdhxi31Y22o48KoF2.WYJBnwvypTpOSlnMn7YuznZMWVHxkKC");
-
-        $manager->persist($account3);
-
-
-        $account4 = new Account();
-        $account4->setName("Freedom")
-            ->setEmail("pleasedonothelpmeimfree@gmail.com")
-            ->setAddress("15 rue de la liberte, 14000 Ciel")
-            ->setPassword("\$2y\$13\$QtpGMKOTaJlUYLB7u1SHa.9EzFGhjxP1BidTZhLmZOQUsR6XDQhly");
-
-        $manager->persist($account4);
-
-
-
         $pays1 = new Pays();
         $pays1->setName("France")
             ->setShortName("FR");
@@ -69,6 +30,47 @@ class AppFixtures extends Fixture
         $pays3->setName("Spain")
             ->setShortName("SP");
         $manager->persist($pays3);
+
+        $account1 = new Account();
+        $account1->setName("HugoDecrypte")
+            ->setAddress("rue Hugo Decrypte, 33100 Paris")
+            ->setEmail("contact@hugodecrypte.com")
+            ->setPassword("\$2y\$13\$jkovLPSyQrl06kbkXLT7R.BzZYJZcPRkoNrw9ZcHR91P6CEFLHGpO")
+            ->setPays($pays3);
+
+        $manager->persist($account1);
+
+
+
+        $account2 = new Account();
+        $account2->setName("Modric")
+            ->setEmail("jesuismodric@gmail.com")
+            ->setAddress("Rue du quiditch, 15000 Poudlard")
+            ->setPassword("\$2y\$13\$aOP40b8mH4znW7nMWIBILukPRxXuMkojO9F3fho4zCfwn948tRPdi")
+            ->setPays($pays2);
+
+        $manager->persist($account2);
+
+
+
+        $account3 = new Account();
+        $account3->setName("Lucas")
+            ->setEmail("jemassumecommejesuis@defendonsnosdroits.org")
+            ->setAddress("1 rue de la liberte, 80000 Paris")
+            ->setPassword("\$2y\$13\$/Le5Xdhxi31Y22o48KoF2.WYJBnwvypTpOSlnMn7YuznZMWVHxkKC")
+            ->setPays($pays1);
+
+        $manager->persist($account3);
+
+
+        $account4 = new Account();
+        $account4->setName("Freedom")
+            ->setEmail("pleasedonothelpmeimfree@gmail.com")
+            ->setAddress("15 rue de la liberte, 14000 Ciel")
+            ->setPassword("\$2y\$13\$QtpGMKOTaJlUYLB7u1SHa.9EzFGhjxP1BidTZhLmZOQUsR6XDQhly")
+            ->setPays($pays1);
+
+        $manager->persist($account4);
 
 
         $produit1 = new Produit();

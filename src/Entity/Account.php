@@ -47,6 +47,10 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Cart::class, mappedBy: 'account', orphanRemoval: true)]
     private Collection $carts;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Pays $pays = null;
+
     public function __construct()
     {
         $this->carts = new ArrayCollection();
@@ -177,6 +181,18 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
             $this->carts->add($cart);
             $cart->setAccount($this);
         }
+
+        return $this;
+    }
+
+    public function getPays(): ?Pays
+    {
+        return $this->pays;
+    }
+
+    public function setPays(?Pays $pays): static
+    {
+        $this->pays = $pays;
 
         return $this;
     }
