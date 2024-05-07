@@ -103,7 +103,6 @@ class ProduitsController extends AbstractController
             if($productCart->getAmount() == $amount){
 
                 $productCart->getProduit()->setNumber($productCart->getProduit()->getNumber()+$productCart->getAmount());
-                $cart->removeItem($productCart);
 
                 $constraintViolation = $validator->validate($productCart);
                 if($constraintViolation->count() != 0){
@@ -121,6 +120,7 @@ class ProduitsController extends AbstractController
 
                 }
 
+                $cart->removeItem($productCart);
                 $entityManager->remove($productCart);
                 $entityManager->persist($cart);
                 $entityManager->persist($productCart->getProduit());
@@ -154,13 +154,18 @@ class ProduitsController extends AbstractController
 
         if(!is_null($account)){
 
+            if($account->getAccountType() == 2){
+                $this->addFlash("error", "Pas autorisé");
+                return $this->redirectToRoute('app_welcome');
+            }
+
             $tab = [];
             $cnt = 0;
 
             $curForm = $this->createForm(ProductCartAddFormType::class);
             $curForm->handleRequest($request);
 
-            if($curForm->isSubmitted()){
+            if($curForm->isSubmitted() and $curForm->isValid()){
                 $this->addItem($account, $validator, $curForm, $em);
                 return $this->redirectToRoute('app_produits_p');
             }
@@ -184,11 +189,11 @@ class ProduitsController extends AbstractController
                 $cnt++;
             }
 
-                return $this->render('produits/index.html.twig', [
-                    'controller_name' => 'ProduitsController',
-                    'products' => $products,
-                    'forms' => $tab
-                ]);
+            return $this->render('produits/index.html.twig', [
+                'controller_name' => 'ProduitsController',
+                'products' => $products,
+                'forms' => $tab
+            ]);
 
         }
 

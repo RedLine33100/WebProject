@@ -31,6 +31,24 @@ class UserController extends AbstractController
             return false;
         }
 
+        if(!$form->isValid()){
+            $constraintViolation = $validator->validate($form);
+            if($constraintViolation->count() != 0){
+
+                $message = "";
+                $cntError = 1;
+
+                foreach ($constraintViolation as $violation){
+                    $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                    $cntError++;
+                }
+
+                $this->addFlash("error", $message);
+                return false;
+
+            }
+        }
+
         if($form->get('pays')->getData() != null){
             $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
             if($pays != null)
@@ -97,7 +115,7 @@ class UserController extends AbstractController
         $form = $this->createForm(UserFormType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
+        if($form->isSubmitted() and $form->isValid()){
             if($this->update($account, $validator, $passwordHasher, $form, $entityManager)) {
                 if ($account->getAccountType() == 2) {
                     return $this->redirectToRoute("app_welcome");

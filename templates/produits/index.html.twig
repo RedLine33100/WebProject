@@ -67,13 +67,15 @@
 
                     {{ form_end(forms[i]) }}
 
-                    {% if app.user %}
-                        {% if app.user.accountType == 1 %}
-                            {% set ma = {"id": produit.id} %}
-                            <td><a href="{{ path('app_product_modify', ma) }}">Modifier</a> </td>
-                        {% endif %}
+                {% else %}
+                    <td></td>
+                    <td></td>
+                {% endif %}
+                {% if app.user %}
+                    {% if app.user.accountType == 1 %}
+                        {% set ma = {"id": produit.id} %}
+                        <td><a href="{{ path('app_product_modify', ma) }}">Modifier</a> </td>
                     {% endif %}
-
                 {% endif %}
 
             </tr>

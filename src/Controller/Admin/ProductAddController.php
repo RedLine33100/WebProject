@@ -27,7 +27,7 @@ class ProductAddController extends AbstractController
         $form = $this->createForm(ProductFormType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted()){
+        if($form->isSubmitted() and $form->isValid()){
 
             $newProduct = new Produit();
             $newProduct->setName($form->get('name')->getData());

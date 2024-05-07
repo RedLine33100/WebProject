@@ -94,7 +94,7 @@ class ProductModifyController extends AbstractController
         $form = $this->createForm(ProductFormType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
+        if($form->isSubmitted() and $form->isValid()){
 
             $this->acceptForm($validator, $form, $entityManager, $id);
             return $this->redirectToRoute('app_product_modify', ["id"=>$id]);
@@ -117,7 +117,7 @@ class ProductModifyController extends AbstractController
             $form->get('number')->setData($product->getNumber());
         }
 
-        if($form->get('pays')->getData() != null){
+        if($form->get('pays')->getData() == null){
             $collection = new ArrayCollection();
             foreach ($product->getPays() as $pays){
                 $collection->add($pays->getId());
