@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ModAccountController extends AbstractController
 {
@@ -67,7 +68,7 @@ class ModAccountController extends AbstractController
     }
 
     #[Route('/modo/account/switchmod/{id}', name: 'app_modo_account_switchmod')]
-    public function switchMod(#[CurrentUser] Account $currentAccount, EntityManagerInterface $entityManager, int $id):Response
+    public function switchMod(#[CurrentUser] Account $currentAccount, ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id):Response
     {
         $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$id]);
         if($account == null){
@@ -77,10 +78,27 @@ class ModAccountController extends AbstractController
         $mod = false;
         if($account->getAccountType() == 1)
             $account->setAccountType(0);
-        else {
+        else if($account->getAccountType() == 0){
             $account->setAccountType(1);
             $mod = true;
         }
+
+        $constraintViolation = $validator->validate($account);
+        if($constraintViolation->count() != 0){
+
+            $message = "";
+            $cntError = 1;
+
+            foreach ($constraintViolation as $violation){
+                $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                $cntError++;
+            }
+
+            $this->addFlash("error", $message);
+            return $this->redirectToRoute('app_admin_account');
+
+        }
+
         $entityManager->persist($account);
         $entityManager->flush();
         if($mod)

@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SecurityController extends AbstractController
 {
@@ -39,7 +40,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, ValidatorInterface $validator, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
     {
         $user = new Account();
         $form = $this->createForm(UserFormType::class);
@@ -64,6 +65,22 @@ class SecurityController extends AbstractController
                         $form->get('password')->getData()
                     )
                 );
+
+                $constraintViolation = $validator->validate($user);
+                if($constraintViolation->count() != 0){
+
+                    $message = "";
+                    $cntError = 1;
+
+                    foreach ($constraintViolation as $violation){
+                        $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                        $cntError++;
+                    }
+
+                    $this->addFlash("error", $message);
+                    return $this->redirectToRoute('app_register');
+
+                }
 
                 $entityManager->persist($user);
                 $entityManager->flush();

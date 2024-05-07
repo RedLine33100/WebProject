@@ -12,11 +12,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductAddController extends AbstractController
 {
     #[Route('/admin/addproduct', name: 'app_admin_addproduct')]
-    public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(#[CurrentUser] Account $account, ValidatorInterface $validator, Request $request, EntityManagerInterface $entityManager): Response
     {
 
         if($account->getAccountType() != 1){
@@ -40,6 +41,22 @@ class ProductAddController extends AbstractController
                 if($paysEntity == null)
                     continue;
                 $newProduct->addPay($paysEntity);
+
+            }
+
+            $constraintViolation = $validator->validate($newProduct);
+            if($constraintViolation->count() != 0){
+
+                $message = "";
+                $cntError = 1;
+
+                foreach ($constraintViolation as $violation){
+                    $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                    $cntError++;
+                }
+
+                $this->addFlash("error", $message);
+                return $this->redirectToRoute('app_admin_addproduct');
 
             }
 

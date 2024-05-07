@@ -14,12 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/produits', name: 'app_produits')]
 class ProduitsController extends AbstractController
 {
 
-    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $entityManager): void{
+    public function addItem(Account $account, ValidatorInterface $validator, FormInterface $form, EntityManagerInterface $entityManager): void{
 
         $cartRepository = $entityManager->getRepository(Cart::class);
         $cart = $cartRepository->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
@@ -57,6 +58,22 @@ class ProduitsController extends AbstractController
             $productCart->setCart($cart);
             $productCart->setPays($product->getPays()->first());
 
+            $constraintViolation = $validator->validate($productCart);
+            if($constraintViolation->count() != 0){
+
+                $message = "";
+                $cntError = 1;
+
+                foreach ($constraintViolation as $violation){
+                    $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                    $cntError++;
+                }
+
+                $this->addFlash("error", $message);
+                return ;
+
+            }
+
             $cart->addItem($productCart);
 
             $entityManager->persist($cart);
@@ -87,6 +104,23 @@ class ProduitsController extends AbstractController
 
                 $productCart->getProduit()->setNumber($productCart->getProduit()->getNumber()+$productCart->getAmount());
                 $cart->removeItem($productCart);
+
+                $constraintViolation = $validator->validate($productCart);
+                if($constraintViolation->count() != 0){
+
+                    $message = "";
+                    $cntError = 1;
+
+                    foreach ($constraintViolation as $violation){
+                        $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                        $cntError++;
+                    }
+
+                    $this->addFlash("error", $message);
+                    return;
+
+                }
+
                 $entityManager->remove($productCart);
                 $entityManager->persist($cart);
                 $entityManager->persist($productCart->getProduit());
@@ -113,7 +147,7 @@ class ProduitsController extends AbstractController
     }
 
     #[Route('/', name: '_p')]
-    public function index(#[CurrentUser] ?Account $account, Request $request, EntityManagerInterface $em, ?string $message): Response
+    public function index(#[CurrentUser] ?Account $account, ValidatorInterface $validator, Request $request, EntityManagerInterface $em, ?string $message): Response
     {
 
         $products = $em->getRepository(Produit::class)->findAll();
@@ -127,7 +161,7 @@ class ProduitsController extends AbstractController
             $curForm->handleRequest($request);
 
             if($curForm->isSubmitted() && $curForm->isValid()){
-                $this->addItem($account, $curForm, $em);
+                $this->addItem($account, $validator, $curForm, $em);
                 return $this->redirectToRoute('app_produits_p');
             }
 

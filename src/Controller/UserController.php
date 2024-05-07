@@ -13,11 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
 
-    public function update(#[CurrentUser] Account $account, UserPasswordHasherInterface $passwordHasher, FormInterface $form, EntityManagerInterface $entityManager)
+    public function update(#[CurrentUser] Account $account, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, FormInterface $form, EntityManagerInterface $entityManager): bool
     {
 
         if($form->get('username')->getData() != null){
@@ -50,8 +51,24 @@ class UserController extends AbstractController
                 $account->setPays($pays);
             else{
                 $this->addFlash('error', 'Le pays n\'existe pas');
-                return;
+                return false;
             }
+        }
+
+        $constraintViolation = $validator->validate($account);
+        if($constraintViolation->count() != 0){
+
+            $message = "";
+            $cntError = 1;
+
+            foreach ($constraintViolation as $violation){
+                $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                $cntError++;
+            }
+
+            $this->addFlash("error", $message);
+            return false;
+
         }
 
         $entityManager->persist($account);
@@ -59,21 +76,26 @@ class UserController extends AbstractController
 
         $this->addFlash('win', 'Updated !!');
 
+        return true;
+
     }
 
     #[Route('/user', name: 'app_user')]
-    public function index(#[CurrentUser] Account $account, UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(#[CurrentUser] Account $account, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $entityManager): Response
     {
 
         $form = $this->createForm(UserFormType::class);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $this->update($account, $passwordHasher, $form, $entityManager);
-            if($this->isGranted("ROLE_ADMIN")) {
-                return $this->redirectToRoute("app_welcome");
+            if($this->update($account, $validator, $passwordHasher, $form, $entityManager)) {
+                if ($account->getAccountType() == 2) {
+                    return $this->redirectToRoute("app_welcome");
+                } else {
+                    return $this->redirectToRoute("app_produits_p");
+                }
             }else{
-                return $this->redirectToRoute("app_produits_p");
+                return $this->redirectToRoute('app_user');
             }
         }
 

@@ -14,11 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductModifyController extends AbstractController
 {
 
-    public function acceptForm(FormInterface $form, EntityManagerInterface $entityManager, int $productID)
+    public function acceptForm(ValidatorInterface $validator, FormInterface $form, EntityManagerInterface $entityManager, int $productID)
     {
 
         $product = $entityManager->getRepository(Produit::class)->findOneBy(["id"=>$productID]);
@@ -48,6 +49,22 @@ class ProductModifyController extends AbstractController
         $product->setDescription($form->get('description')->getData());
         $product->setPrice($form->get('price')->getData());
 
+        $constraintViolation = $validator->validate($product);
+        if($constraintViolation->count() != 0){
+
+            $message = "";
+            $cntError = 1;
+
+            foreach ($constraintViolation as $violation){
+                $message = $message . $cntError . ": " . $violation->getMessage() . "<br>";
+                $cntError++;
+            }
+
+            $this->addFlash("error", $message);
+            return;
+
+        }
+
         $this->addFlash("win", "Produit modifié");
 
         $entityManager->persist($product);
@@ -56,7 +73,7 @@ class ProductModifyController extends AbstractController
     }
 
     #[Route('/product/modify/{id}', name: 'app_product_modify')]
-    public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager, int $id): Response
+    public function index(#[CurrentUser] Account $account, ValidatorInterface $validator, Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
 
         if($account->getAccountType() != 1){
@@ -79,7 +96,7 @@ class ProductModifyController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
 
-            $this->acceptForm($form, $entityManager, $id);
+            $this->acceptForm($validator, $form, $entityManager, $id);
             return $this->redirectToRoute('app_product_modify', ["id"=>$id]);
 
         }
