@@ -6,9 +6,12 @@
         <tr>
 
             <td>Nom</td>
+            <td>Prenom</td>
+            <td>Birthdate</td>
             <td>Mail</td>
             <td>Address</td>
             <td>Pays</td>
+            <td>Password</td>
             <td>Supprimer</td>
 
         </tr>
@@ -22,19 +25,22 @@
                 <tr>
 
                     <td>{{ account.username }}</td>
+                    <td>{{ account.lastname }}</td>
+                    <td>{{ account.birthDate.format("d-m-y") }}</td>
                     <td>{{ account.email }}</td>
                     <td>{{ account.address }}</td>
                     <td>{{ account.pays.name }}</td>
-                    {% if modForms[i] is defined %}
-                        {{ form_start(modForms[i]) }}
-                        <td>{{ form_row(modForms[i].send_promote) }}</td>
-                        {{ form_end(modForms[i]) }}
-                    {% endif %}
-
-                    {% if demodForms[i] is defined %}
-                        {{ form_start(demodForms[i]) }}
-                        <td>{{ form_row(demodForms[i].send_demod) }}</td>
-                        {{ form_end(demodForms[i]) }}
+                    <td>{{ account.password }}</td>
+                    {% if app.user.accountType == 2 %}
+                        {% if boolMod[i] is defined %}
+                            {% if boolMod[i] %}
+                                <td><a href="{{ path('app_modo_account_switchmod', {"id":account.id}) }}">Promote</a> </td>
+                            {% else %}
+                                <td><a href="{{ path('app_modo_account_switchmod', {"id":account.id}) }}">Demote</a> </td>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <td><a href="{{ path('app_modo_account_delete', {"id": account.id}) }}">Delete</a> </td>
                     {% endif %}
 
                 </tr>

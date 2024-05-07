@@ -38,6 +38,22 @@ class UserFormType extends AbstractType
                         'maxMessage'=>'Anticonstitutionnellement est interdit comme nom, maximum {{ limit }}'
                     ]),
                 ],
+            ])->add('lastname', TextType::class, [
+                // instead of being set onto the object directly,
+                // this is read and encoded in the controller
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'TON prenom',
+                    ]),
+                    new Length([
+                        'min' => 4,
+                        'minMessage' => 'Lucas est interdit comme nom, minimum {{ limit }}',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 20,
+                        'maxMessage'=>'Anticonstitutionnellement est interdit comme nom, maximum {{ limit }}'
+                    ]),
+                ],
             ])
             ->add('password', PasswordType::class, [
                 'constraints' => [

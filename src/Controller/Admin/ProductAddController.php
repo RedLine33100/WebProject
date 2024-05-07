@@ -19,7 +19,7 @@ class ProductAddController extends AbstractController
     public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager): Response
     {
 
-        if(!in_array('ROLE_MOD', $account->getRoles(), true)){
+        if($account->getAccountType() != 1){
             return $this->redirectToRoute('app_produits_p');
         }
 

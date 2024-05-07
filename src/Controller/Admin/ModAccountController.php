@@ -3,15 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Account;
-use App\Form\UserDeleteFormType;
-use App\Form\UserDemodFormType;
-use App\Form\UserModFormType;
 use App\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,67 +14,71 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ModAccountController extends AbstractController
 {
 
-    public function deleteUser(FormInterface $form, EntityManagerInterface $entityManager)
+    #[Route('/modo/account/delete/{id}', name: 'app_modo_account_delete')]
+    public function deleteUser(#[CurrentUser] Account $currentAccount, EntityManagerInterface $entityManager, int $id):Response
     {
-        $accountID = $form->get('account_id')->getData();
-        $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$accountID]);
-        if($account == null){
-            return;
+        if($currentAccount->getAccountType() != 1){
+            return $this->redirectToRoute('app_produits_p');
         }
+
+        if($currentAccount->getId() == $id){
+            $this->addFlash("error", "Ne pas se supprimer soi-même");
+            return $this->redirectToRoute('app_produits_p');
+        }
+        $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$id]);
+        if($account == null){
+            $this->addFlash("error", "Aucun compte trouvé");
+            return $this->redirectToRoute('app_produits_p');
+        }
+
+        if(in_array('ROLE_MOD', $account->getRoles(), true)){
+            $this->addFlash("error", "Impossible");
+        }
+
         $entityManager->remove($account);
         $entityManager->flush();
         $this->addFlash('win', 'User supprimé');
+        return $this->redirectToRoute('app_modo_account');
     }
 
     #[Route('/modo/account', name: 'app_modo_account')]
     public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager, AccountRepository $accountRepository): Response
     {
 
-        if(!in_array('ROLE_MOD', $account->getRoles(), true)){
+        if($account->getAccountType() != 1){
             return $this->redirectToRoute('app_produits_p');
         }
 
-        $testForm = $this->createForm(UserDeleteFormType::class);
-        $testForm->handleRequest($request);
-        if($testForm->isSubmitted() && $testForm->isValid()){
-            $this->deleteUser($testForm, $entityManager);
-            return $this->redirectToRoute('app_modo_account');
-        }
-
         $accounts = $accountRepository->findByRole("ROLE_USER");
-        $forms = [];
+        $blValidate = [];
 
         $cnt = 0;
 
         foreach ($accounts as $checkAccount){
-            if(!in_array('ROLE_MOD', $checkAccount->getRoles(), true)) {
-                $newForm = $this->createForm(UserDeleteFormType::class);
-                $newForm->get('account_id')->setData($checkAccount->getId());
-                $forms[$cnt] = $newForm->createView();
-            }
+            $blValidate[$cnt] = !in_array('ROLE_MOD', $checkAccount->getRoles(), true);
             $cnt++;
         }
 
         return $this->render('mod/moduser.html.twig', [
             'controller_name' => 'ModAccountController',
             'accounts' => $accounts,
-            'forms'=>$forms
+            'blValidate'=>$blValidate
         ]);
     }
 
-    public function updateAdmin(FormInterface $form, EntityManagerInterface $entityManager) : void
+    #[Route('/modo/account/switchmod/{id}', name: 'app_modo_account_switchmod')]
+    public function switchMod(#[CurrentUser] Account $currentAccount, EntityManagerInterface $entityManager, int $id):Response
     {
-        $accountID = $form->get('account_id')->getData();
-        $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$accountID]);
+        $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$id]);
         if($account == null){
             $this->addFlash('error', 'No account');
-            return;
+            return $this->redirectToRoute('app_admin_account');
         }
         $mod = false;
-        if(in_array('ROLE_MOD', $account->getRoles(), true))
-            $account->removeRole("ROLE_MOD");
+        if($account->getAccountType() == 1)
+            $account->setAccountType(0);
         else {
-            $account->addRole("ROLE_MOD");
+            $account->setAccountType(1);
             $mod = true;
         }
         $entityManager->persist($account);
@@ -89,48 +87,32 @@ class ModAccountController extends AbstractController
             $this->addFlash('win', 'Le compte est devenue moderateur');
         else
             $this->addFlash('win', 'Le compte n\'est plus moderateur');
+
+
+        return $this->redirectToRoute('app_admin_account');
+
     }
 
     #[Route('/admin/account', name: 'app_admin_account')]
     public function adminManager(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager, AccountRepository $accountRepository): Response
     {
 
-        if(!in_array('ROLE_ADMIN', $account->getRoles(), true)){
+        if($account->getAccountType() != 2){
             return $this->redirectToRoute('app_produits_p');
         }
 
-        $testForm = $this->createForm(UserModFormType::class);
-        $testForm->handleRequest($request);
-        if($testForm->isSubmitted() && $testForm->isValid()){
-            $this->updateAdmin($testForm, $entityManager);
-            return $this->redirectToRoute('app_admin_account');
-        }
-
-        $testForm2 = $this->createForm(UserDemodFormType::class);
-        $testForm2->handleRequest($request);
-        if($testForm2->isSubmitted() && $testForm2->isValid()){
-            $this->updateAdmin($testForm2, $entityManager);
-            return $this->redirectToRoute('app_admin_account');
-        }
-
         $accounts = $accountRepository->findByRole("ROLE_USER");
-        $modForms = [];
-        $demodForms = [];
+        $boolMod = [];
 
         $cnt = 0;
 
         foreach ($accounts as $checkAccount){
-            if(!in_array('ROLE_ADMIN', $checkAccount->getRoles(), true)) {
-                $newForm = null;
+            if($checkAccount->getAccountType() != 2) {
 
-                if(in_array('ROLE_MOD', $checkAccount->getRoles(), true)){
-                    $newForm = $this->createForm(UserDemodFormType::class);
-                    $newForm->get('account_id')->setData($checkAccount->getId());
-                    $demodForms[$cnt] = $newForm->createView();
+                if($checkAccount->getAccountType() == 1){
+                    $boolMod[$cnt] = false;
                 }else{
-                    $newForm = $this->createForm(UserModFormType::class);
-                    $newForm->get('account_id')->setData($checkAccount->getId());
-                    $modForms[$cnt] = $newForm->createView();
+                    $boolMod[$cnt] = true;
                 }
 
             }
@@ -140,8 +122,7 @@ class ModAccountController extends AbstractController
         return $this->render('mod/moduser.html.twig', [
             'controller_name' => 'ModAccountController',
             'accounts' => $accounts,
-            'modForms'=>$modForms,
-            'demodForms'=>$demodForms
+            'boolMod'=>$boolMod
         ]);
     }
 

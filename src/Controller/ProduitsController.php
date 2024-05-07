@@ -6,16 +6,9 @@ use App\Entity\Account;
 use App\Entity\Cart;
 use App\Entity\Produit;
 use App\Entity\ProduitCart;
-use App\Form\AddItemFormType;
 use App\Form\ProductCartAddFormType;
-use App\Repository\ProduitRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,7 +69,7 @@ class ProduitsController extends AbstractController
 
         }else{
 
-            $productCart = $entityManager->getRepository(ProduitCart::class)->findOneBy(["id_produit"=>$product->getId(), "id_cart"=>$cart->getId()]);
+            $productCart = $entityManager->getRepository(ProduitCart::class)->findOneBy(["produit"=>$product->getId(), "cart"=>$cart->getId()]);
 
             if($productCart == null){
                 $this->addFlash('error', 'Impossible, vous n\'en avez pas dans le panier');
@@ -85,7 +78,7 @@ class ProduitsController extends AbstractController
 
             $amount = $amount*-1;
 
-            if($productCart->getAmount()>$amount){
+            if($productCart->getAmount()<$amount){
                 $this->addFlash('error', 'Impossible, pas assez de produit dans le panier');
                 return;
             }
@@ -132,23 +125,19 @@ class ProduitsController extends AbstractController
 
             $curForm = $this->createForm(ProductCartAddFormType::class);
             $curForm->handleRequest($request);
-            $printMessage = "DEF";
-
-            if($message)
-                $printMessage = $message;
 
             if($curForm->isSubmitted() && $curForm->isValid()){
                 $this->addItem($account, $curForm, $em);
                 return $this->redirectToRoute('app_produits_p');
             }
 
-            $cart = $em->getRepository(Cart::class)->findOneBy(["id_account"=>$account->getId(), "is_paid"=>false]);
+            $cart = $em->getRepository(Cart::class)->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
 
             foreach ($products as $product){
 
                 $productCart = null;
                 if($cart != null)
-                    $productCart = $em->getRepository(ProduitCart::class)->findOneBy(["id_produit"=>$product->getId(), "id_cart"=>$cart->getId()]);
+                    $productCart = $em->getRepository(ProduitCart::class)->findOneBy(["produit"=>$product->getId(), "cart"=>$cart->getId()]);
 
                 if($product->getNumber() <= 0 and $productCart == null){
                     $cnt++;
@@ -161,20 +150,11 @@ class ProduitsController extends AbstractController
                 $cnt++;
             }
 
-            if($printMessage == null) {
                 return $this->render('produits/index.html.twig', [
                     'controller_name' => 'ProduitsController',
                     'products' => $products,
                     'forms' => $tab
                 ]);
-            }else{
-                return $this->render('produits/index.html.twig', [
-                    'controller_name' => 'ProduitsController',
-                    'products' => $products,
-                    'forms' => $tab,
-                    'message' => $printMessage
-                ]);
-            }
 
         }
 

@@ -59,7 +59,7 @@ class ProductModifyController extends AbstractController
     public function index(#[CurrentUser] Account $account, Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
 
-        if(!in_array('ROLE_MOD', $account->getRoles(), true)){
+        if($account->getAccountType() != 1){
             return $this->redirectToRoute('app_produits_p');
         }
 
@@ -84,23 +84,23 @@ class ProductModifyController extends AbstractController
 
         }
 
-        if(!$form->get('name')->getData()){
+        if($form->get('name')->getData() == null){
             $form->get('name')->setData($product->getName());
         }
 
-        if(!$form->get('description')->getData()){
+        if($form->get('description')->getData() == null){
             $form->get('description')->setData($product->getDescription());
         }
 
-        if(!$form->get('price')->getData()){
+        if($form->get('price')->getData() == null){
             $form->get('price')->setData($product->getPrice());
         }
 
-        if(!$form->get('number')->getData()){
+        if($form->get('number')->getData() == null){
             $form->get('number')->setData($product->getNumber());
         }
 
-        if(!$form->get('pays')->getData()){
+        if($form->get('pays')->getData() != null){
             $collection = new ArrayCollection();
             foreach ($product->getPays() as $pays){
                 $collection->add($pays->getId());

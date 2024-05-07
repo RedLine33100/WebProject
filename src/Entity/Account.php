@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+#[ORM\Table(name: "account")]
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 class Account implements UserInterface, PasswordAuthenticatedUserInterface
@@ -21,6 +22,9 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $username = null;
+
+    #[ORM\Column(length: 30)]
+    private ?string $lastname = null;
 
     /**
      * @var list<string> The user roles
@@ -52,6 +56,9 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTime $birthDate = null;
+
+    #[ORM\Column]
+    private int $accountType = 0;
 
     public function __construct()
     {
@@ -216,9 +223,10 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param \DateTime|null $birthDate
      */
-    public function setBirthDate(?\DateTime $birthDate): void
+    public function setBirthDate(?\DateTime $birthDate): Account
     {
         $this->birthDate = $birthDate;
+        return $this;
     }
 
     /**
@@ -227,5 +235,39 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     public function getBirthDate(): ?\DateTime
     {
         return $this->birthDate;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param string|null $lastname
+     */
+    public function setLastname(?string $lastname): Account
+    {
+        $this->lastname = $lastname;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAccountType(): int
+    {
+        return $this->accountType;
+    }
+
+    /**
+     * @param int $accountType
+     */
+    public function setAccountType(int $accountType): Account
+    {
+        $this->accountType = $accountType;
+        return $this;
     }
 }

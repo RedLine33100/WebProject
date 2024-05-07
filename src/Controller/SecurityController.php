@@ -34,6 +34,7 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
+        $this->addFlash("win", "Déconnecté");
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
@@ -54,7 +55,8 @@ class SecurityController extends AbstractController
                 $user->setUsername($form->get('username')->getData());
                 $user->setAddress($form->get('address')->getData());
                 $user->setEmail($form->get('email')->getData());
-                $user->setBirthDate(new \DateTime($form->get('birthdate')->getData()));
+                $user->setLastname($form->get('lastname')->getData());
+                $user->setBirthDate($form->get('birthdate')->getData());
 
                 $user->setPassword(
                     $userPasswordHasher->hashPassword(

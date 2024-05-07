@@ -33,22 +33,25 @@ class AppFixtures extends Fixture
 
         $modAccount = new Account();
         $modAccount->setUsername("GentleMates")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("OMG je suis à la rue")
             ->setEmail("contact@gm.com")
             ->setPassword("$2y$13\$pPvWkKysDYM.CVSMnUJc3uhA.rh8yxwm/bl821I0p7kQxC8vhsNxu")
-            ->setPays($pays1);
-        $modAccount->addRole("ROLE_MOD");
+            ->setPays($pays1)
+            ->setAccountType(1);
 
         $manager->persist($modAccount);
 
         $adminAccount = new Account();
         $adminAccount->setUsername("BeauGosse")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("OMG je suis à la rue")
             ->setEmail("beaugosse@gm.com")
             ->setPassword("$2y$13\$DsOLy1UzPIOCrIT1I1Z8ju/AshiDy0IuigASMk1Nlw..INgOd5Rk6")
-            ->setPays($pays1);
-        $adminAccount->addRole("ROLE_MOD");
-        $adminAccount->addRole("ROLE_ADMIN");
+            ->setPays($pays1)
+            ->setAccountType(2);
 
         $manager->persist($adminAccount);
 
@@ -56,24 +59,26 @@ class AppFixtures extends Fixture
 
         $sadmin = new Account();
         $sadmin->setUsername("sadmin")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("Il m'ont rien dits")
             ->setEmail("JSPfrere@aidezmoi.org")
             ->setPassword("$2y$13\$Qitmy5PIrtzuwneZrMhlxORM7GZcZCaDNJdW6iGsLft8J0pdPLi6K")
-            ->setPays($pays1);
-
-        $sadmin->addRole("ROLE_MOD");
-        $sadmin->addRole("ROLE_ADMIN");
+            ->setPays($pays1)
+            ->setAccountType(2);
 
         $manager->persist($sadmin);
 
 
         $gilles = new Account();
         $gilles->setUsername("gilles")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("COMMENT je devine?")
             ->setEmail("OUECHJSPMOI@aidezmoi.org")
             ->setPassword("$2y$13\$sKoS.BE4Yxas2sl2E8X.HuHv2G0wEQ/t5XLLryMYAPrV9Vlj5BXuu")
-            ->setPays($pays1);
-        $gilles->addRole("ROLE_MOD");
+            ->setPays($pays1)
+            ->setAccountType(1);
 
         $manager->persist($gilles);
 
@@ -81,6 +86,8 @@ class AppFixtures extends Fixture
 
         $rita = new Account();
         $rita->setUsername("rita")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("Unknown")
             ->setEmail("rita@mitsuko.org")
             ->setPassword("$2y$13\$zU3hRDk8dfVPAjjHzIiR9OitGpV.C/SwmuxLd1rKQnFwNDECjgxc2")
@@ -91,6 +98,8 @@ class AppFixtures extends Fixture
 
         $boumediene = new Account();
         $boumediene->setUsername("boumediene")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("dzadehuir")
             ->setEmail("boumedine@gmail.com")
             ->setPassword("$2y$13\$bWp1QjxPc6vsP3o4eHqDre68n63nPVjrJilDmSnaOkZCgusHnNEmq")
@@ -101,6 +110,8 @@ class AppFixtures extends Fixture
 
         $account1 = new Account();
         $account1->setUsername("HugoDecrypte")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setAddress("rue Hugo Decrypte, 33100 Paris")
             ->setEmail("contact@hugodecrypte.com")
             ->setPassword("\$2y\$13\$jkovLPSyQrl06kbkXLT7R.BzZYJZcPRkoNrw9ZcHR91P6CEFLHGpO")
@@ -112,6 +123,8 @@ class AppFixtures extends Fixture
 
         $account2 = new Account();
         $account2->setUsername("Modric")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setEmail("jesuismodric@gmail.com")
             ->setAddress("Rue du quiditch, 15000 Poudlard")
             ->setPassword("\$2y\$13\$aOP40b8mH4znW7nMWIBILukPRxXuMkojO9F3fho4zCfwn948tRPdi")
@@ -123,6 +136,8 @@ class AppFixtures extends Fixture
 
         $account3 = new Account();
         $account3->setUsername("Lucas")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setEmail("jemassumecommejesuis@defendonsnosdroits.org")
             ->setAddress("1 rue de la liberte, 80000 Paris")
             ->setPassword("\$2y\$13\$/Le5Xdhxi31Y22o48KoF2.WYJBnwvypTpOSlnMn7YuznZMWVHxkKC")
@@ -133,6 +148,8 @@ class AppFixtures extends Fixture
 
         $account4 = new Account();
         $account4->setUsername("Freedom")
+            ->setBirthDate(new \DateTime())
+            ->setLastname("Default")
             ->setEmail("pleasedonothelpmeimfree@gmail.com")
             ->setAddress("15 rue de la liberte, 14000 Ciel")
             ->setPassword("\$2y\$13\$QtpGMKOTaJlUYLB7u1SHa.9EzFGhjxP1BidTZhLmZOQUsR6XDQhly")
@@ -178,7 +195,7 @@ class AppFixtures extends Fixture
         $produit4->setName("Paracetamol")
             ->setDescription("Ne pas en abuser, demander conseil au Pharmacien")
             ->setPrice(12.2)
-            ->setNumber(6)
+            ->setNumber(0)
             ->addPay($pays1);
 
         $manager->persist($produit4);
