@@ -61,10 +61,10 @@ class UserFormType extends AbstractType
                         'message' => 'Stp oublie pas le pass frere ...',
                     ]),
                     new Length([
-                        'min' => 6,
+                        'min' => 3,
                         'minMessage' => 'Ton mots de passe doit etre d\'au moins {{ limit }} characters',
                         // max length allowed by Symfony for security reasons
-                        'max' => 15,
+                        'max' => 30,
                         'maxMessage' => 'Ton mots de passe doit faire moins de {{ limit }} characters'
                     ]),
                 ],
@@ -78,7 +78,7 @@ class UserFormType extends AbstractType
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Merci de donner une address de minimum {{ limit }} caracteres',
-                        'max' => 4096,
+                        'max' => 100,
                         'maxMessage'=> 'Merci de donner une address de maximum {{ limit }} caracteres'
                     ]),
                 ],

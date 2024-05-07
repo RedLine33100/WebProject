@@ -6,6 +6,7 @@ use App\Repository\PaysRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PaysRepository::class)]
 class Pays
@@ -15,10 +16,16 @@ class Pays
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 10, unique: true)]
+    #[ORM\Column(length: 2, unique: true)]
+    #[Assert\Length(exactly: 2, exactMessage: "shortname doit etre de 2 caractere")]
+    #[Assert\NotBlank(message: "Shortname ne peut être null")]
+    #[Assert\NotNull(message: "Shortname ne peut être null")]
     private ?string $shortName = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\Length(min: 2, max: 100, minMessage: "Minimum 2 caractere", maxMessage: "Maximum 100 caractére")]
+    #[Assert\NotBlank(message: "Name ne peut être null")]
+    #[Assert\NotNull(message: "Name ne peut être null")]
     private ?string $name = null;
 
     /**

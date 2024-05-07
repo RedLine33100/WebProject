@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProduitCartRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\UniqueConstraint(name: 'unique_triplet', columns: ["id_produit", "id_pays", "id_cart"])]
 #[ORM\Entity(repositoryClass: ProduitCartRepository::class)]
@@ -15,18 +16,22 @@ class ProduitCart
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $amount = null;
+    #[Assert\Range(minMessage: "Pas de negatif", min: 0)]
+    private int $amount = 0;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'id_produit', nullable: false)]
+    #[Assert\NotNull(message: 'Produit ne peut être null')]
     private ?Produit $produit = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'id_pays', nullable: false)]
+    #[Assert\NotNull(message: 'Pays ne peut être null')]
     private ?Pays $pays = null;
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(name: 'id_cart', nullable: false)]
+    #[Assert\NotNull(message: 'Cart ne peut être null')]
     private ?Cart $cart = null;
 
     public function getId(): ?int

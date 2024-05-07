@@ -6,6 +6,7 @@ use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -15,16 +16,24 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: 30, unique: true)]
+    #[Assert\NotNull(message: "Name ne peut être null")]
+    #[Assert\NotBlank(message: "Name ne peut être vide")]
+    #[Assert\Length(min: 6, max:30, minMessage: "Name doit avoir au minimum {{ limit }} caractere", maxMessage: "Name doit avoir au maximum {{ limit }} caractere")]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100)]
+    #[Assert\NotNull(message: "Description ne peut être null")]
+    #[Assert\NotBlank(message: "Description ne peut être vide")]
+    #[Assert\Length(min: 6, max:100, minMessage: "Description doit avoir au minimum {{ limit }} caractere", maxMessage: "Description doit avoir au maximum {{ limit }} caractere")]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?float $price = null;
+    #[Assert\Range(minMessage: "Prix doit être positif", min: 0)]
+    private float $price = 0.0;
 
     #[ORM\Column]
+    #[Assert\Range(minMessage: "Number doit être positif", min: 0)]
     private int $number = 0;
 
     /**
