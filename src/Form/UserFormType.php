@@ -30,7 +30,7 @@ class UserFormType extends AbstractType
                         'message' => 'TON NOM',
                     ]),
                     new Length([
-                        'min' => 6,
+                        'min' => 4,
                         'minMessage' => 'Lucas est interdit comme nom, minimum {{ limit }}',
                         // max length allowed by Symfony for security reasons
                         'max' => 20,
