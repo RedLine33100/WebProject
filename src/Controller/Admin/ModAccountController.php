@@ -73,6 +73,7 @@ class ModAccountController extends AbstractController
         $accountID = $form->get('account_id')->getData();
         $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$accountID]);
         if($account == null){
+            $this->addFlash('error', 'No account');
             return;
         }
         $mod = false;
@@ -105,8 +106,16 @@ class ModAccountController extends AbstractController
             return $this->redirectToRoute('app_admin_account');
         }
 
+        $testForm2 = $this->createForm(UserDemodFormType::class);
+        $testForm2->handleRequest($request);
+        if($testForm2->isSubmitted() && $testForm2->isValid()){
+            $this->updateAdmin($testForm2, $entityManager);
+            return $this->redirectToRoute('app_admin_account');
+        }
+
         $accounts = $accountRepository->findByRole("ROLE_USER");
-        $forms = [];
+        $modForms = [];
+        $demodForms = [];
 
         $cnt = 0;
 
@@ -116,13 +125,14 @@ class ModAccountController extends AbstractController
 
                 if(in_array('ROLE_MOD', $checkAccount->getRoles(), true)){
                     $newForm = $this->createForm(UserDemodFormType::class);
+                    $newForm->get('account_id')->setData($checkAccount->getId());
+                    $demodForms[$cnt] = $newForm->createView();
                 }else{
                     $newForm = $this->createForm(UserModFormType::class);
+                    $newForm->get('account_id')->setData($checkAccount->getId());
+                    $modForms[$cnt] = $newForm->createView();
                 }
 
-                $newForm->get('account_id')->setData($checkAccount->getId());
-
-                $forms[$cnt] = $newForm->createView();
             }
             $cnt++;
         }
@@ -130,7 +140,8 @@ class ModAccountController extends AbstractController
         return $this->render('mod/moduser.html.twig', [
             'controller_name' => 'ModAccountController',
             'accounts' => $accounts,
-            'forms'=>$forms
+            'modForms'=>$modForms,
+            'demodForms'=>$demodForms
         ]);
     }
 

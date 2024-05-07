@@ -14,7 +14,7 @@ class UserModFormType extends AbstractType
     {
         $builder
             ->add('account_id', HiddenType::class)
-            ->add('send', SubmitType::class, ['label' => 'Promote'])
+            ->add('send_promote', SubmitType::class, ['label' => 'Promote'])
         ;
     }
 

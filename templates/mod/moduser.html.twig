@@ -25,10 +25,16 @@
                     <td>{{ account.email }}</td>
                     <td>{{ account.address }}</td>
                     <td>{{ account.pays.name }}</td>
-                    {% if forms[i] is defined %}
-                        {{ form_start(forms[i]) }}
-                        <td>{{ form_row(forms[i].send) }}</td>
-                        {{ form_end(forms[i]) }}
+                    {% if modForms[i] is defined %}
+                        {{ form_start(modForms[i]) }}
+                        <td>{{ form_row(modForms[i].send_promote) }}</td>
+                        {{ form_end(modForms[i]) }}
+                    {% endif %}
+
+                    {% if demodForms[i] is defined %}
+                        {{ form_start(demodForms[i]) }}
+                        <td>{{ form_row(demodForms[i].send_demod) }}</td>
+                        {{ form_end(demodForms[i]) }}
                     {% endif %}
 
                 </tr>

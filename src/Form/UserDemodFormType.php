@@ -14,7 +14,7 @@ class UserDemodFormType extends AbstractType
     {
         $builder
             ->add('account_id', HiddenType::class)
-            ->add('send', SubmitType::class, ['label' => 'Demote'])
+            ->add('send_demod', SubmitType::class, ['label' => 'Demote'])
         ;
     }
 
