@@ -32,10 +32,11 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 4,
-                        'minMessage' => 'Lucas est interdit comme nom, minimum {{ limit }}',
                         // max length allowed by Symfony for security reasons
                         'max' => 20,
-                        'maxMessage'=>'Anticonstitutionnellement est interdit comme nom, maximum {{ limit }}'
+                        'minMessage'=>"Données username erronees {{ limit }} minimum",
+                        'maxMessage'=>"Données username erronees {{ limit }} maximum"
+
                     ]),
                 ],
             ])->add('lastname', TextType::class, [
@@ -48,10 +49,10 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 4,
-                        'minMessage' => 'Lucas est interdit comme nom, minimum {{ limit }}',
                         // max length allowed by Symfony for security reasons
                         'max' => 20,
-                        'maxMessage'=>'Anticonstitutionnellement est interdit comme nom, maximum {{ limit }}'
+                        'minMessage'=>"Données lastname erronees {{ limit }} minimum",
+                        'maxMessage'=>"Données lastname erronees {{ limit }} maximum"
                     ]),
                 ],
             ])
@@ -62,10 +63,9 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 3,
-                        'minMessage' => 'Ton mots de passe doit etre d\'au moins {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
                         'max' => 30,
-                        'maxMessage' => 'Ton mots de passe doit faire moins de {{ limit }} characters'
+                        'minMessage'=>"Données password erronees {{ limit }} minimum",
+                        'maxMessage'=>"Données password erronees {{ limit }} maximum"
                     ]),
                 ],
                 ])
@@ -77,9 +77,9 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Merci de donner une address de minimum {{ limit }} caracteres',
                         'max' => 100,
-                        'maxMessage'=> 'Merci de donner une address de maximum {{ limit }} caracteres'
+                        'minMessage'=>"Données address erronees {{ limit }} minimum",
+                        'maxMessage'=>"Données address erronees {{ limit }} maximum"
                     ]),
                 ],
             ])
@@ -91,9 +91,9 @@ class UserFormType extends AbstractType
                     ]),
                     new Length([
                         'min'=>6,
-                        'minMessage' => 'Merci de donner une address mail de minimum {{ limit }} caracteres',
                         'max'=>30,
-                        'maxMessage' => 'Merci de donner une address mail de maximum {{ limit }} caracteres',
+                        'minMessage'=>"Données email erronees {{ limit }} minimum",
+                        'maxMessage'=>"Données email erronees {{ limit }} maximum"
                     ])
                 ],
             ])

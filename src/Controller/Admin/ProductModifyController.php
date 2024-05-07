@@ -94,7 +94,7 @@ class ProductModifyController extends AbstractController
         $form = $this->createForm(ProductFormType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted()){
 
             $this->acceptForm($validator, $form, $entityManager, $id);
             return $this->redirectToRoute('app_product_modify', ["id"=>$id]);

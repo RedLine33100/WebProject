@@ -55,9 +55,8 @@ class ProductFormType extends AbstractType
                     ]),
                     new Range([
                         'min'=>0,
-                        'minMessage'=>'Pas de negatif voyons',
                         'max'=>100,
-                        'maxMessage'=>'Abuse pas, {{ limit }} max',
+                        'notInRangeMessage'=>"Données price erronees",
                     ])
                 ]
             ])
@@ -68,9 +67,8 @@ class ProductFormType extends AbstractType
                     ]),
                     new Range([
                         'min'=>0,
-                        'minMessage'=>'Pas de negatif voyons',
                         'max'=>100,
-                        'maxMessage'=>'Abuse pas, {{ limit }} max',
+                        'notInRangeMessage'=>"Données number erronees",
                     ])
                 ]
             ])

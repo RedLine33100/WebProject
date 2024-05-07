@@ -27,7 +27,7 @@ class ProductAddController extends AbstractController
         $form = $this->createForm(ProductFormType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted()){
 
             $newProduct = new Produit();
             $newProduct->setName($form->get('name')->getData());
@@ -67,6 +67,8 @@ class ProductAddController extends AbstractController
 
             return $this->redirectToRoute('app_produits_p');
 
+        }else{
+            $this->addFlash("error", "none");
         }
 
         return $this->render('mod/productadd.html.twig', [

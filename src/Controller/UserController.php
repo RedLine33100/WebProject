@@ -45,6 +45,16 @@ class UserController extends AbstractController
             $account->setBirthDate($form->get('birthdate')->getData());
         }
 
+        if($form->get('password')->getData()->length()<3 or $form->get('password')->getData()->length()>30){
+            $this->addFlash('error', 'Password doit être entre 3 et 30 char');
+            return false;
+        }
+
+        if($account->getUsername() == $form->get('password')->getData()){
+            $this->addFlash('error', 'Username et password doivent être différent');
+            return false;
+        }
+
         if($form->get('pays')->getData() != null){
             $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
             if($pays != null)
@@ -87,7 +97,7 @@ class UserController extends AbstractController
         $form = $this->createForm(UserFormType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted()){
             if($this->update($account, $validator, $passwordHasher, $form, $entityManager)) {
                 if ($account->getAccountType() == 2) {
                     return $this->redirectToRoute("app_welcome");
@@ -95,7 +105,7 @@ class UserController extends AbstractController
                     return $this->redirectToRoute("app_produits_p");
                 }
             }else{
-                return $this->redirectToRoute('app_user');
+                return $this->redirectToRoute('app_produits_p');
             }
         }
 

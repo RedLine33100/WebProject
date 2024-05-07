@@ -160,7 +160,7 @@ class ProduitsController extends AbstractController
             $curForm = $this->createForm(ProductCartAddFormType::class);
             $curForm->handleRequest($request);
 
-            if($curForm->isSubmitted() && $curForm->isValid()){
+            if($curForm->isSubmitted()){
                 $this->addItem($account, $validator, $curForm, $em);
                 return $this->redirectToRoute('app_produits_p');
             }

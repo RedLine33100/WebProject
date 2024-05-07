@@ -24,16 +24,17 @@ class ModAccountController extends AbstractController
 
         if($currentAccount->getId() == $id){
             $this->addFlash("error", "Ne pas se supprimer soi-même");
-            return $this->redirectToRoute('app_produits_p');
+            return $this->redirectToRoute('app_modo_account');
         }
         $account = $entityManager->getRepository(Account::class)->findOneBy(["id"=>$id]);
         if($account == null){
             $this->addFlash("error", "Aucun compte trouvé");
-            return $this->redirectToRoute('app_produits_p');
+            return $this->redirectToRoute('app_modo_account');
         }
 
-        if(in_array('ROLE_MOD', $account->getRoles(), true)){
+        if($account->getAccountType() != 0){
             $this->addFlash("error", "Impossible");
+            return $this->redirectToRoute('app_modo_account');
         }
 
         $entityManager->remove($account);
@@ -75,6 +76,12 @@ class ModAccountController extends AbstractController
             $this->addFlash('error', 'No account');
             return $this->redirectToRoute('app_admin_account');
         }
+
+        if($account->getAccountType() == 2){
+            $this->addFlash('error', 'Impossible');
+            return $this->redirectToRoute('app_admin_account');
+        }
+
         $mod = false;
         if($account->getAccountType() == 1)
             $account->setAccountType(0);

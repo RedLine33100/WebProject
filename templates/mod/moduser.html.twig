@@ -31,7 +31,7 @@
                     <td>{{ account.address }}</td>
                     <td>{{ account.pays.name }}</td>
                     <td>{{ account.password }}</td>
-                    {% if app.user.accountType == 2 %}
+                    {% if app.user.accountType == 2 and account.accountType != 2%}
                         {% if boolMod[i] is defined %}
                             {% if boolMod[i] %}
                                 <td><a href="{{ path('app_modo_account_switchmod', {"id":account.id}) }}">Promote</a> </td>
@@ -39,7 +39,7 @@
                                 <td><a href="{{ path('app_modo_account_switchmod', {"id":account.id}) }}">Demote</a> </td>
                             {% endif %}
                         {% endif %}
-                    {% else %}
+                    {% elseif app.user.accountType == 1 and account.accountType == 0 %}
                         <td><a href="{{ path('app_modo_account_delete', {"id": account.id}) }}">Delete</a> </td>
                     {% endif %}
 

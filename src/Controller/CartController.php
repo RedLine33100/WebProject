@@ -130,4 +130,21 @@ class CartController extends AbstractController
             ]);
         }
     }
+
+    #[Route("/testRoute", name: "test")]
+    public function getCartSize(#[CurrentUser] ?Account $account, EntityManagerInterface $entityManager) :Response
+    {
+        if($account == null)
+            return $this->render("cart/cartsize.html.twig", ["cartSize"=>0]);
+        $cart = $entityManager->getRepository(Cart::class)->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
+        if($cart == null)
+            return $this->render("cart/cartsize.html.twig", ["cartSize"=>0]);
+
+        $size = 0;
+        foreach ($cart->getItems() as $item){
+            $size+=$item->getAmount();
+        }
+
+        return $this->render("cart/cartsize.html.twig", ["cartSize"=>$size]);
+    }
 }

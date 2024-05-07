@@ -73,7 +73,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column]
-    #[Assert\Range(minMessage: "Minimum 0 en type de compte", maxMessage: 'Maximum 2 en type de compte', min: 0, max: 2 )]
+    #[Assert\Range(notInRangeMessage: "accountType doit être entre {{ min }} et {{ max }}", min: 0, max: 2 )]
     private int $accountType = 0;
 
     public function __construct()
