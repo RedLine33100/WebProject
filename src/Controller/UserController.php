@@ -21,6 +21,26 @@ class UserController extends AbstractController
     public function update(#[CurrentUser] Account $account, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, FormInterface $form, EntityManagerInterface $entityManager): bool
     {
 
+        if(strlen($form->get('password')->getData())<3 or strlen($form->get('password')->getData())>30){
+            $this->addFlash('error', 'Password doit être entre 3 et 30 char');
+            return false;
+        }
+
+        if($form->get('username')->getData() == $form->get('password')->getData()){
+            $this->addFlash('error', 'Username et password doivent être différent');
+            return false;
+        }
+
+        if($form->get('pays')->getData() != null){
+            $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
+            if($pays != null)
+                $account->setPays($pays);
+            else{
+                $this->addFlash('error', 'Le pays n\'existe pas');
+                return false;
+            }
+        }
+
         if($form->get('username')->getData() != null){
             $account->setUsername($form->get('username')->getData());
         }
@@ -43,26 +63,6 @@ class UserController extends AbstractController
 
         if($form->get('birthdate')->getData() != null){
             $account->setBirthDate($form->get('birthdate')->getData());
-        }
-
-        if($form->get('password')->getData()->length()<3 or $form->get('password')->getData()->length()>30){
-            $this->addFlash('error', 'Password doit être entre 3 et 30 char');
-            return false;
-        }
-
-        if($account->getUsername() == $form->get('password')->getData()){
-            $this->addFlash('error', 'Username et password doivent être différent');
-            return false;
-        }
-
-        if($form->get('pays')->getData() != null){
-            $pays = $entityManager->getRepository(Pays::class)->findOneBy(["id"=>$form->get('pays')->getData()]);
-            if($pays != null)
-                $account->setPays($pays);
-            else{
-                $this->addFlash('error', 'Le pays n\'existe pas');
-                return false;
-            }
         }
 
         $constraintViolation = $validator->validate($account);
@@ -105,7 +105,7 @@ class UserController extends AbstractController
                     return $this->redirectToRoute("app_produits_p");
                 }
             }else{
-                return $this->redirectToRoute('app_produits_p');
+                return $this->redirectToRoute('app_user');
             }
         }
 

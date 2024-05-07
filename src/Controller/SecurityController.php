@@ -36,7 +36,6 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         $this->addFlash("win", "Déconnecté");
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
     #[Route('/register', name: 'app_register')]
@@ -59,7 +58,7 @@ class SecurityController extends AbstractController
                 $user->setLastname($form->get('lastname')->getData());
                 $user->setBirthDate($form->get('birthdate')->getData());
 
-                if($form->get('password')->getData()->length()<3 or $form->get('password')->getData()->length()>30){
+                if(strlen($form->get('password')->getData())<3 or strlen($form->get('password')->getData())>30){
                     $this->addFlash('error', 'Password doit être entre 3 et 30 char');
                     return $this->redirectToRoute('app_register');
                 }

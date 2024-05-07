@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1 class="tClass">Welcome {{ user|default("Anonymous") }} !</h1>
+    <h1 class="tClass">Welcome {{ app.user.username|default("Anonymous") }} !</h1>
     <p>Bienvenue sur notre site de ventes!</p>
 
 {% endblock %}
