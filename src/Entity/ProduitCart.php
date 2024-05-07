@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Repository\ProduitCartRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\UniqueConstraint(name: 'unique_triplet', columns: ["produit", "pays", "cart"])]
+#[ORM\UniqueConstraint(name: 'unique_triplet', columns: ["id_produit", "id_pays", "id_cart"])]
 #[ORM\Entity(repositoryClass: ProduitCartRepository::class)]
 class ProduitCart
 {
@@ -18,15 +18,15 @@ class ProduitCart
     private ?int $amount = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'produit', nullable: false)]
+    #[ORM\JoinColumn(name: 'id_produit', nullable: false)]
     private ?Produit $produit = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'pays', nullable: false)]
+    #[ORM\JoinColumn(name: 'id_pays', nullable: false)]
     private ?Pays $pays = null;
 
     #[ORM\ManyToOne(inversedBy: 'items')]
-    #[ORM\JoinColumn(name: 'cart', nullable: false)]
+    #[ORM\JoinColumn(name: 'id_cart', nullable: false)]
     private ?Cart $cart = null;
 
     public function getId(): ?int

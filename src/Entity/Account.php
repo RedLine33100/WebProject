@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AccountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -48,6 +49,9 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTime $birthDate = null;
 
     public function __construct()
     {
@@ -207,5 +211,21 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    /**
+     * @param \DateTime|null $birthDate
+     */
+    public function setBirthDate(?\DateTime $birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getBirthDate(): ?\DateTime
+    {
+        return $this->birthDate;
     }
 }

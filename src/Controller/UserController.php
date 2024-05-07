@@ -61,7 +61,11 @@ class UserController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
             $this->update($account, $passwordHasher, $form, $entityManager);
-            return $this->redirectToRoute("app_user");
+            if($this->isGranted("ROLE_ADMIN")) {
+                return $this->redirectToRoute("app_welcome");
+            }else{
+                return $this->redirectToRoute("app_produits_p");
+            }
         }
 
         if(!$form->get('username')->getData()){
@@ -78,6 +82,10 @@ class UserController extends AbstractController
 
         if(!$form->get('pays')->getData()){
             $form->get('pays')->setData($account->getPays()->getId());
+        }
+
+        if(!$form->get('birthdate')->getData()){
+            $form->get('birthdate')->setData($account->getBirthDate());
         }
 
         return $this->render('user/index.html.twig', [

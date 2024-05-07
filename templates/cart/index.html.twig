@@ -1,4 +1,4 @@
-{% extends 'layout/base.html.twig' %}
+{% extends 'layout/base2.html.twig' %}
 {% block body %}
     <h1>Cart</h1>
 
@@ -34,9 +34,7 @@
                 <th>{{ cartProduct.pays.name }}</th>
                 <th>{{ cartProduct.produit.price }}</th>
                 <th>{{ cartProduct.amount }}</th>
-                {{ form_start(suppForms[i]) }}
-                <th>{{ form_row(suppForms[i].send) }}</th>
-                {{ form_end(suppForms[i]) }}
+                <th><a href="{{ path('app_cart_drop_id', {"id": cartProduct.id}) }}">Delete</a> </th>
 
             </tr>
 
@@ -46,12 +44,8 @@
 
         </table>
 
-        {% if paidButton is defined %}
-        {{ form(paidButton) }}
-            {% endif %}
-        {% if clearButton is defined %}
-            {{ form(clearButton) }}
-        {% endif %}
+        <a href="{{ path('app_cart_validate') }}">Valider</a>
+        <a href="{{ path('app_cart_clear') }}">Clear</a>
         {% if prixTotal is defined %}
             <h4>Prix total: {{ prixTotal }}</h4>
         {% endif %}

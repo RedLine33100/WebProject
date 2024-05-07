@@ -1,4 +1,4 @@
-{% extends 'layout/base.html.twig' %}
+{% extends 'layout/base2.html.twig' %}
 
 {% block body %}
 
@@ -55,7 +55,7 @@
                 <td>{{ produit.number }}</td>
                 <td>{{ produit.price }}</td>
 
-                {% if forms is defined %}
+                {% if forms[i] is defined %}
 
                     {{ form_start(forms[i]) }}
 
@@ -65,13 +65,13 @@
 
                     {{ form_end(forms[i]) }}
 
-                {% endif %}
-
-                {% if app.user %}
-                    {% if is_granted("ROLE_MOD") %}
-                        {% set ma = {"id": produit.id} %}
-                        <td><a href="{{ path('app_product_modify', ma) }}">Modifier</a> </td>
+                    {% if app.user %}
+                        {% if is_granted("ROLE_MOD") and not is_granted("ROLE_ADMIN") %}
+                            {% set ma = {"id": produit.id} %}
+                            <td><a href="{{ path('app_product_modify', ma) }}">Modifier</a> </td>
+                        {% endif %}
                     {% endif %}
+
                 {% endif %}
 
             </tr>

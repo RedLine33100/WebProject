@@ -6,6 +6,7 @@ use App\Entity\Account;
 use App\Entity\Pays;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -86,6 +87,7 @@ class UserFormType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => false,
             ])
+            ->add('birthdate', DateType::class)
             ->add('submit', SubmitType::class)
             ;
     }

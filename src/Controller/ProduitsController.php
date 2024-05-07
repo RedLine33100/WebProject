@@ -26,9 +26,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ProduitsController extends AbstractController
 {
 
-    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $produitRepository): void{
+    public function addItem(Account $account, FormInterface $form, EntityManagerInterface $entityManager): void{
 
-        $cartRepository = $produitRepository->getRepository(Cart::class);
+        $cartRepository = $entityManager->getRepository(Cart::class);
         $cart = $cartRepository->findOneBy(["account"=>$account->getId(), "isPaid"=>false]);
 
         if($cart == null){
@@ -37,40 +37,85 @@ class ProduitsController extends AbstractController
             $cart->setAccount($account);
         }
 
-        $produitRepository->persist($cart);
+        $entityManager->persist($cart);
 
-        $product = $produitRepository->getRepository(Produit::class)->findOneBy(["id"=>$form->get('item_id')->getData()]);
+        $product = $entityManager->getRepository(Produit::class)->findOneBy(["id"=>$form->get('item_id')->getData()]);
         if($product == null){
-            $produitRepository->flush();
+            $entityManager->flush();
             $this->addFlash('error', 'Le produit est introuvable');
             return;
         }
 
         $amount = $form->get('item_number')->getData();
 
-        if($product->getNumber() < $amount){
-            $produitRepository->flush();
-            $this->addFlash('error', 'Impossible, pas assez de produit');
-            return;
+        if($amount>0) {
+
+            if ($product->getNumber() < $amount) {
+                $entityManager->flush();
+                $this->addFlash('error', 'Impossible, pas assez de produit');
+                return;
+            }
+
+            $product->setNumber($product->getNumber() - $amount);
+
+            $productCart = new ProduitCart();
+            $productCart->setAmount($amount);
+            $productCart->setProduit($product);
+            $productCart->setCart($cart);
+            $productCart->setPays($product->getPays()->first());
+
+            $cart->addItem($productCart);
+
+            $entityManager->persist($cart);
+            $entityManager->persist($product);
+            $entityManager->persist($productCart);
+
+            $entityManager->flush();
+
+            $this->addFlash('win', 'Dans le panier');
+
+        }else{
+
+            $productCart = $entityManager->getRepository(ProduitCart::class)->findOneBy(["id_produit"=>$product->getId(), "id_cart"=>$cart->getId()]);
+
+            if($productCart == null){
+                $this->addFlash('error', 'Impossible, vous n\'en avez pas dans le panier');
+                return;
+            }
+
+            $amount = $amount*-1;
+
+            if($productCart->getAmount()>$amount){
+                $this->addFlash('error', 'Impossible, pas assez de produit dans le panier');
+                return;
+            }
+
+            if($productCart->getAmount() == $amount){
+
+                $productCart->getProduit()->setNumber($productCart->getProduit()->getNumber()+$productCart->getAmount());
+                $cart->removeItem($productCart);
+                $entityManager->remove($productCart);
+                $entityManager->persist($cart);
+                $entityManager->persist($productCart->getProduit());
+                $entityManager->flush();
+
+
+                $this->addFlash('win', 'Produit retiré');
+                return;
+
+            }
+
+            $product->setNumber($product->getNumber() + $amount);
+            $productCart->setAmount($productCart->getAmount()-$amount);
+
+            $entityManager->persist($product);
+            $entityManager->persist($productCart);
+
+            $entityManager->flush();
+
+            $this->addFlash('win', 'Produit retiré');
+
         }
-
-        $product->setNumber($product->getNumber()-$amount);
-
-        $productCart = new ProduitCart();
-        $productCart->setAmount($amount);
-        $productCart->setProduit($product);
-        $productCart->setCart($cart);
-        $productCart->setPays($product->getPays()->first());
-
-        $cart->addItem($productCart);
-
-        $produitRepository->persist($cart);
-        $produitRepository->persist($product);
-        $produitRepository->persist($productCart);
-
-        $produitRepository->flush();
-
-        $this->addFlash('win', 'Dans le panier');
 
     }
 
@@ -97,9 +142,21 @@ class ProduitsController extends AbstractController
                 return $this->redirectToRoute('app_produits_p');
             }
 
+            $cart = $em->getRepository(Cart::class)->findOneBy(["id_account"=>$account->getId(), "is_paid"=>false]);
+
             foreach ($products as $product){
+
+                $productCart = null;
+                if($cart != null)
+                    $productCart = $em->getRepository(ProduitCart::class)->findOneBy(["id_produit"=>$product->getId(), "id_cart"=>$cart->getId()]);
+
+                if($product->getNumber() <= 0 and $productCart == null){
+                    $cnt++;
+                    continue;
+                }
                 $createdForm = $this->createForm(ProductCartAddFormType::class);
                 $createdForm->get('item_id')->setData($product->getId());
+                $createdForm->get('item_number')->setData(0);
                 $tab[$cnt] = $createdForm->createView();
                 $cnt++;
             }

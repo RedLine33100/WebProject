@@ -2,6 +2,16 @@
 
 <link rel="stylesheet" href="{{ asset('stylesheet/headernav.css') }}">
 
+<div>
+    {% if not app.user %}
+        <img src="{{ asset('image/uncheck.png') }}" style="max-height: 100px; max-width: 100px;">
+    {% elseif is_granted("ROLE_MOD")%}
+        <img src="{{ asset('image/check.jpg') }}" style="max-height: 100px; max-width: 100px;">
+    {% else %}
+        <img src="{{ asset('image/trone.jpg') }}" style="max-height: 100px; max-width: 100px;">
+    {% endif %}
+</div>
+
 <nav>
 
     <ul>
@@ -36,21 +46,26 @@
                 <li><a href="{{ path('app_cart') }}">Moderation</a>
 
                     <ul>
-                        <li>
-                            <a href="{{ path('app_admin_addproduct') }}">Ajouter Produit</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('app_modo_account') }}">Retirer User</a>
-                        </li>
                         {% if is_granted("ROLE_ADMIN") %}
                             <li>
                                 <a href="{{ path('app_admin_account') }}">Changer moderateur</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('app_admin_addproduct') }}">Ajouter Produit</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('app_modo_account') }}">Retirer User</a>
                             </li>
                         {% endif %}
                     </ul>
 
                 </li>
 
+            {% endif %}
+
+            {% if is_granted("ROLE_ADMIN") %}
+                <li><a href="https://fr.wikipedia.org/wiki/Life_Is_Strange_(jeu_vid%C3%A9o)">Strange</a> </li>
             {% endif %}
 
         {% endif %}

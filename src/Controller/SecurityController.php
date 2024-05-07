@@ -54,6 +54,7 @@ class SecurityController extends AbstractController
                 $user->setUsername($form->get('username')->getData());
                 $user->setAddress($form->get('address')->getData());
                 $user->setEmail($form->get('email')->getData());
+                $user->setBirthDate(new \DateTime($form->get('birthdate')->getData()));
 
                 $user->setPassword(
                     $userPasswordHasher->hashPassword(
@@ -66,6 +67,8 @@ class SecurityController extends AbstractController
                 $entityManager->flush();
 
                 // do anything else you need here, like send an email
+
+                $this->addFlash("win", "Compte crée");
 
                 return $security->login($user, 'form_login', 'main');
 

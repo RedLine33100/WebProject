@@ -16,14 +16,7 @@ class ProductCartAddFormType extends AbstractType
     {
         $builder
             ->add('item_id', HiddenType::class)
-            ->add('item_number', IntegerType::class, [
-                'constraints'=>[
-                    new Range([
-                        'min'=>1,
-                        'minMessage'=>'Donc toi tu prend rien ?'
-                    ])
-                ]
-            ])
+            ->add('item_number', IntegerType::class)
             ->add('send', SubmitType::class, ['label'=>'Ajouter'])
         ;
     }
