@@ -1,0 +1,1 @@
+Attention, il semblerai qu'en fonction du navigateur, le site peux ne pas fonctionner, veuillez privilegier Firefox
